@@ -1,0 +1,62 @@
+In mac, we use launchctl instead of systemctl
+
+launchctl start docker
+launchctl stop docker
+
+The following command does not work on mac:
+launchctl status docker
+
+Maybe on Linux, this command will work
+systemctl status docker
+
+Configuring docker as a service helps run the docker daemon in the background and automatically starts the service when the system boots up
+
+we can manually start docker daemon on linux (not mac) using dockerd command. 
+On Mac, dockerd command can only be executed using the Whale icon of docker desktop for mac. (Link : https://github.com/moby/moby/issues/27102)
+
+When the docker daemon starts, it listens on an internal Unix socker at the path /var/run/Docker.sock in unix. For mac, I am not sure, will have to research.
+
+A Unix socket is an IPC or Interprocess Communication Mechanism that is used for different communications on the same host. This means that the docker daemon is only accessible within the same host and the docker CLI is configured to interact with Docker deamon on this socket.
+
+How to run commands from one host (example, Rohit's Mac laptop) to another host( maybe another laptop, like Asmita's laptop) using docker CLI?
+Answer : As of now, the current way the default is setup, the docker daemon is not accessible outside of the docker host because its only listening on the Unix socket.
+But, we could make the docker daemon listen on a TCP interface on the docker host by adding the host option while running the docker deamon command like this (in Unix, not sure if the command below will work in Mac or Windows):
+
+dockerd --debug \ --host=tcp://192.168.1.10:2375
+
+In the aboe case, our host happens to have an iterface at 192.168.1.10 and the standard port for Docker happens to be 2375. Now the docker daemon is accesible from outside of the Docker host using the IP 191.168.1.10 and the port 2375.
+The other host can now target the Docker daemon using the Docker commands by first setting an environment variable by first setting an environment variable called DOCKER_HOST to point to the IP address of the Docker host, like this:
+
+export DOCKER_HOST="tcp://192.168.1.10.2375"
+
+Reason why this is disabled by default : If not disabled by default, this will allow anyone on the internet to run containers on 192.168.1.10 host as the default setting of docker is not encrypted and there's no authentication required.
+
+By default, docker daemon serves on encrypted traffic. To enable encryption, you must create a pair of TLS certificates and add the TLS flag to true, and pass in the path of the tls certificate and key like this command below:
+
+dockerd --debug \
+        --host=tcp://192.168.1.10:2376 \
+        --tls=true \
+        --tlscert=/var/docker/server.pem \
+        --tlskey=/var/docker/serverkey.pem
+
+The port now with tls enabled is 2376 instead of 2375 since 2375 is for unencrypted traffic and 2376 is for encrypted traffic.
+
+The options given in the command above can be moved to a configurations file at the location /etc/dockers/daemon.json
+
+The /etc/docker/daemon.json file looks like this:
+
+{
+  "debug": true,
+  "hosts": [tcp://192.168.1.10:2376"]
+  "tls": true,
+  "tlscert": "/var/docker/server.pem",
+  "tlskey": /var/docker/serverkey.pem"
+}
+
+This is not created by default, so we have to create it manually.
+
+Note that the host property is an array that supports multiple listeners, so it has to be specified like above inside [].
+
+
+
+
