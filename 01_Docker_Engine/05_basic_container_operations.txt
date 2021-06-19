@@ -1,0 +1,67 @@
+Docker Objects:
+General format of docker commands is as follows:
+
+docker <docker-object> <sub-command> [options] <Arguments/Commands>
+
+To list differnet docker objects, use docker <docker-object> ls. As in:
+docker image ls
+docker container ls
+docker volume ls
+docker network ls
+
+To run a container:
+
+docker container run -it ubuntu
+
+To build an image:
+
+docker image build .
+
+To attach to a running container:
+
+docker container attach ubuntu
+
+To kill a running instance of a container:
+
+docker container kill ubuntu
+
+Two syntaxs of docker commands:
+
+1. docker <docker-object> <sub-command> [options] <Arguments/Commands>
+
+2. docker <sub-command> [options] <Arguments/Commands>
+
+1. is the newer syntax, and we will use this in future. 2. is the older syntax, and it still works. But we wont use 2 type of syntax anymore.
+
+Container Create - Create a new container
+Eg:
+docker container create httpd
+
+In Unix, when we create docker, it creates a path /var/lib/docker (Do note that I could not find a path synonymous to /var/lib/docker on MacOS) to store all image and container related files. Ins
+
+ls /var/lib/docker
+
+In this folder above, we will find separate directories that docker manages. Under the containers directory, we can find the a new directory created with a unique id of the container. Within thatdirectory, we can see all files of the container. The files inside this will be as 'Checkpoint', 'hostconfig.json' and 'config.v2.json'
+
+docker container ls command lists all container info, while docker container ls -a lists all running, stopped and created containers. Docker also assigns a random name if we do not specify a name
+
+-l shows the last created container
+docker container ls -l  
+
+-q shows short created id for running containers
+docker container ls -q
+
+-aq shows short ids for all running,stopped and created containers
+docker container ls -aq
+
+Container Start - Start a container we created
+Eg:
+docker container start cc14fbf7fee8
+
+Container Run - Create and Start a container
+
+If we want to combine create and start container command, we can use docker container run command as follows
+Eg:
+docker container run ubuntu
+
+
