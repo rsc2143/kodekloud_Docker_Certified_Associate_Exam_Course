@@ -1,0 +1,14 @@
+docker container run -it ubuntu
+
+docker container ls -l
+
+To execute a command inside the container from outside while container is in detached mode
+
+docker container exec <ID> hostname
+This command will print the unique id, basically <ID> again
+
+docker container exec -it <ID> /bin/bash
+The above command will get us inside the container
+
+docker container attach <ID>
+

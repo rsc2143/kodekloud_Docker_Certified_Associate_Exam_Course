@@ -1,0 +1,275 @@
+Inspect a container:
+docker container inspect c33d41c
+
+Output looks like this:
+
+[
+    {
+        "Id": "c33d41c6d8784f4e7a520469903acb3ffc06982ff882c905c901fee1bf055d53",
+        "Created": "2021-06-21T08:00:45.5013967Z",
+        "Path": "docker-entrypoint.sh",
+        "Args": [
+            "mongod"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 39700,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2021-06-21T08:00:47.882319Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:81a352f64d83652fce5d6c6fb71f0c9e172445f2dd84e3eaa8eb47493a325f46",
+        "ResolvConfPath": "/var/lib/docker/containers/c33d41c6d8784f4e7a520469903acb3ffc06982ff882c905c901fee1bf055d53/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/c33d41c6d8784f4e7a520469903acb3ffc06982ff882c905c901fee1bf055d53/hostname",
+        "HostsPath": "/var/lib/docker/containers/c33d41c6d8784f4e7a520469903acb3ffc06982ff882c905c901fee1bf055d53/hosts",
+        "LogPath": "/var/lib/docker/containers/c33d41c6d8784f4e7a520469903acb3ffc06982ff882c905c901fee1bf055d53/c33d41c6d8784f4e7a520469903acb3ffc06982ff882c905c901fee1bf055d53-json.log",
+        "Name": "/zealous_lumiere",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "default",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "host",
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/56ec3decf772a82157118e2afbb079d70a2e763d2d870fb84a96c6333e6624a0-init/diff:/var/lib/docker/overlay2/e1a42e163c69b5b678c645f7b74f2e5dc0837d5ac179eb54b919d19baed3da14/diff:/var/lib/docker/overlay2/6aa8cfc73d42de80697be5251deb33fec9a6c74824f221d4abdac9f1b1d31695/diff:/var/lib/docker/overlay2/4fe32f86e72d2e26b7e5a42d3d486aea4c62748dccf2a4f2825d58f70db9191a/diff:/var/lib/docker/overlay2/0008629b1b0b78d68d69ac1df3b031d04af3aa059889e732e2839ad2f1d4cbe8/diff:/var/lib/docker/overlay2/cf7c190f150bb4e19ed56d16608deae706d89245baeb35da63f72a3122e61159/diff:/var/lib/docker/overlay2/293cba8e52e08fcc18535e136f6c0d5466385661ea89871111f27b676386c753/diff:/var/lib/docker/overlay2/7cd03653d409a611bd11f0f77c5e3813662aa147e54a8a4b0bff85b0c0f4066e/diff:/var/lib/docker/overlay2/11b2bc25e07792983211a5e7dc6163d05eaf8e3bc67412ab8b7ef3a519da60e6/diff:/var/lib/docker/overlay2/46c3f07ecf334f28abc2d904f1893f24baa95755a0295e5917398c38fe80d58c/diff:/var/lib/docker/overlay2/3f72d0b7f75d73291237dfed3cb9d32d7bd67fa318c7868dbabceef9d0cc6a42/diff:/var/lib/docker/overlay2/3c1945e0ca9ea887409e12f7d2fcd7a7c9919bb50559de29ab98c3f76f8cb35d/diff:/var/lib/docker/overlay2/05ea286e895da69b56af42060c81c4ded25c511be5b89fe10fd9013b98a291ce/diff",
+                "MergedDir": "/var/lib/docker/overlay2/56ec3decf772a82157118e2afbb079d70a2e763d2d870fb84a96c6333e6624a0/merged",
+                "UpperDir": "/var/lib/docker/overlay2/56ec3decf772a82157118e2afbb079d70a2e763d2d870fb84a96c6333e6624a0/diff",
+                "WorkDir": "/var/lib/docker/overlay2/56ec3decf772a82157118e2afbb079d70a2e763d2d870fb84a96c6333e6624a0/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [
+            {
+                "Type": "volume",
+                "Name": "a78a1302d9521fb8783da68488f2c051e6f4bda628207dc3463c1eaf64a64c5e",
+                "Source": "/var/lib/docker/volumes/a78a1302d9521fb8783da68488f2c051e6f4bda628207dc3463c1eaf64a64c5e/_data",
+                "Destination": "/data/configdb",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+            },
+            {
+                "Type": "volume",
+                "Name": "f4244e52babce3cb858ed4cbb796bc6045e413b30055605d88b36a5dc8216001",
+                "Source": "/var/lib/docker/volumes/f4244e52babce3cb858ed4cbb796bc6045e413b30055605d88b36a5dc8216001/_data",
+                "Destination": "/data/db",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+            }
+        ],
+        "Config": {
+            "Hostname": "c33d41c6d878",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "27017/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "GOSU_VERSION=1.12",
+                "JSYAML_VERSION=3.13.1",
+                "MONGO_PACKAGE=mongodb-org",
+                "MONGO_REPO=repo.mongodb.org",
+                "MONGO_MAJOR=4.4",
+                "MONGO_VERSION=4.4.6"
+            ],
+            "Cmd": [
+                "mongod"
+            ],
+            "Image": "mongo",
+            "Volumes": {
+                "/data/configdb": {},
+                "/data/db": {}
+            },
+            "WorkingDir": "",
+            "Entrypoint": [
+                "docker-entrypoint.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {}
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "d2e93bc7410a69640104352dcc995c8834d75cb6b1e7d5b57e73df01e672a822",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {
+                "27017/tcp": null
+            },
+            "SandboxKey": "/var/run/docker/netns/d2e93bc7410a",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "89b08a521a402ec8714908ae98777e19e2358c2cc086d4efdb79143118efb2f7",
+            "Gateway": "172.17.0.1",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "172.17.0.2",
+            "IPPrefixLen": 16,
+            "IPv6Gateway": "",
+            "MacAddress": "02:42:ac:11:00:02",
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "24e5707bb693db6bd32adb239a97dac87ce1dbc7490b681a55b886e22ee04b63",
+                    "EndpointID": "89b08a521a402ec8714908ae98777e19e2358c2cc086d4efdb79143118efb2f7",
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.2",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:11:00:02",
+                    "DriverOpts": null
+                }
+            }
+        }
+    }
+]
+
+
+docker container stats
+
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+4e18ddbdeffd   mongodb   0.12%     172.8MiB / 1.942GiB   8.69%     1.32kB / 0B   63.6MB / 0B   32
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+4e18ddbdeffd   mongodb   0.12%     172.8MiB / 1.942GiB   8.69%     1.32kB / 0B   63.6MB / 0B   32
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O     PIDS
+4e18ddbdeffd   mongodb   1.06%     172.8MiB / 1.942GiB   8.69%     1.32kB / 0B   63.6MB / 0B   32
+
+docker container top mongodb
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+999                 13387               13360               2                   02:33               ?                   00:00:04            mongod --bind_ip_all
+
+Note that the under CMD in output for 'docker container top mongodb', we have the process that is running for mongodb container
+
+docker logs command :
+To check the logs for the container, we run
+docker container logs mongodb
+
+To live stream the logs, we run
+docker container logs -f mongodb
+or 
+docker container logs --follow mongodb
+
+docker system events:
+docker system events --since 60m
+
+Output for above command is :
+
+2021-06-22T08:03:04.711054300+05:30 network connect 88f438dd59a9587eedf970c496f7c5a69fd1f18d76e8a67cdb31c6e65cce7768 (container=4e18ddbdeffdd395602b550dea906127bfd11a9182bd7dcb6a4eba3f1cba1aa5, name=mongodb_default, type=bridge)
+2021-06-22T08:03:04.841432300+05:30 volume mount 6a55277dc008674493f346a8ac832e175070f9caa4aeb36623efb24822a25194 (container=4e18ddbdeffdd395602b550dea906127bfd11a9182bd7dcb6a4eba3f1cba1aa5, destination=/data/configdb, driver=local, propagation=, read/write=true)
+2021-06-22T08:03:10.567909400+05:30 container start 4e18ddbdeffdd395602b550dea906127bfd11a9182bd7dcb6a4eba3f1cba1aa5 (com.docker.compose.config-hash=43ff5c44acba9592d253bd33c205dec50bc53504493e9f2d1ebc149ba65a1378, com.docker.compose.container-number=1, com.docker.compose.oneoff=False, com.docker.compose.project=mongodb, com.docker.compose.project.config_files=docker-compose.yml, com.docker.compose.project.working_dir=/Users/rohit/Downloads/Study/docker/mongo_db_docker/getting_started/mongodb, com.docker.compose.service=mongodb, com.docker.compose.version=1.29.1, desktop.docker.io/binds/0/Source=/Users/rohit/Downloads/Study/docker/mongo_db_docker/getting_started/mongodb/database, desktop.docker.io/binds/0/SourceKind=hostFile, desktop.docker.io/binds/0/Target=/data/db, desktop.docker.io/binds/1/Source=/Users/rohit/Downloads/Study/docker/mongo_db_docker/getting_started, desktop.docker.io/binds/1/SourceKind=hostFile, desktop.docker.io/binds/1/Target=/mnt, image=mongo, name=mongodb)
+2021-06-22T08:06:06.151585700+05:30 container top 4e18ddbdeffdd395602b550dea906127bfd11a9182bd7dcb6a4eba3f1cba1aa5 (com.docker.compose.config-hash=43ff5c44acba9592d253bd33c205dec50bc53504493e9f2d1ebc149ba65a1378, com.docker.compose.container-number=1, com.docker.compose.oneoff=False, com.docker.compose.project=mongodb, com.docker.compose.project.config_files=docker-compose.yml, com.docker.compose.project.working_dir=/Users/rohit/Downloads/Study/docker/mongo_db_docker/getting_started/mongodb, com.docker.compose.service=mongodb, com.docker.compose.version=1.29.1, desktop.docker.io/binds/0/Source=/Users/rohit/Downloads/Study/docker/mongo_db_docker/getting_started/mongodb/database, desktop.docker.io/binds/0/SourceKind=hostFile, desktop.docker.io/binds/0/Target=/data/db, desktop.docker.io/binds/1/Source=/Users/rohit/Downloads/Study/docker/mongo_db_docker/getting_started, desktop.docker.io/binds/1/SourceKind=hostFile, desktop.docker.io/binds/1/Target=/mnt, image=mongo, name=mongodb)

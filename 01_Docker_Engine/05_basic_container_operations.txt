@@ -64,4 +64,25 @@ If we want to combine create and start container command, we can use docker cont
 Eg:
 docker container run ubuntu
 
+If we do docker container ls -a, we will see that the container is exited with status 0, the reason being that Ubuntu is just an image of an Operating System that is used as a base image by other images. So there is no process or application running in it by default. Note that docker is not present to run an operating system, but to get an application to run. Since ubuntu image does not have an application to run, it exits as there is no purpose to that image. 
+Ubuntu is just an image of an OS which comes with a shell. When we created the ubutu container, it created a shell as an application and executed the shell. It didnt find any terminal to associate with it and as a result, the process or shell died. However, if we provide a terminal to Ubuntu's base image vy using -t option, it will connect with our terminal. But that terminal will not be interactive and wont be useful. For this, we pass in -i option , where -i stands for interactive.
+
+Note that if we go inside ubuntu conatiner and run exit command fron inside the container, we will stop the container as well, which will show up in 'docker conainer ls' command with status exited with 0.
+
+We can provide our own name to the container using --name tag, so docker wont use a random name for the container.
+Eg:
+docker container run -itd --name=webapp ubuntu
+
+We can also rename container, provide old name first such as following
+
+docker container rename webapp custom-webapp
+
+-d makes the container detached from the current terminal, so Cntrl+C will not exit the container as the container is running in the background.We can attach our container back to the terminal using the following command:
+
+docker container attach custom-webapp
+
+or we can use the id of the container (Note that as long as the first few characters of the id are unique, we can just specify those characters as well). So following command will also attach the container:
+
+docker container attach 11sd
+
 
