@@ -1,0 +1,10 @@
+First read about creating VPC 
+- with public and private subnets
+- for a public web server
+Both these are subtopics in the following link
+https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Tutorials.WebServerDB.CreateVPC.html#CHAP_Tutorials.WebServerDB.CreateVPC.VPCAndSubnets
+
+Then read about creating an EC2 instance and installing a web server:
+https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Tutorials.WebServerDB.CreateWebServer.html
+
+

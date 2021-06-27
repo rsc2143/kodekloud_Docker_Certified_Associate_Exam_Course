@@ -1,0 +1,10 @@
+docker container run -it --name=webapp ubuntu
+root@3452sdf:/# hostname
+3452sdf
+
+docker container run -it --name=webapp --hostname=webapp ubuntu
+root@webapp :/# hostname
+webapp
+
+
+

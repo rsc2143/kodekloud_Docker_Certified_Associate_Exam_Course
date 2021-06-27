@@ -1,0 +1,29 @@
+Link : https://www.cloudflare.com/en-gb/learning/dns/glossary/what-is-my-ip-address/
+
+What is my IP address?
+IP addresses are unique identifiers used to determine who is who on the Internet. IP addresses can be formatted differently depending on whether they use IPv4 or IPv6 protocol.
+
+So what is an IP address and why does it matter?
+‘IP’ stands for Internet Protocol, which is the set of rules that makes it possible for devices to communicate over the Internet. With billions of people accessing the Internet every day, unique identifiers are necessary to keep track of who is doing what. The Internet Protocol solves this by assigning IP numbers to every device accessing the Internet.
+
+A computer’s IP address is like the physical address of a house. If someone calls a pizzeria to order a delivery, they need to provide their physical address. Without that address, the pizza delivery person will have no idea which house to deliver the pizza to!
+
+For example, when a user types a domain name, like google.com, into a web browser, this will initiate a request to Google’s web server asking for content (the Google homepage). Once Google receives the request, it needs to know where to send the website content. For this reason, the request will contain the asker’s IP address. Using the provided IP address, Google can send a response back to the user’s device, which will then display that content in the user’s web browser.
+
+The system that orchestrates all this is called DNS. It works like a phone book for IP addresses so that users can access web services using human-friendly domain names. When a user types a domain name like ‘facebook.com’ into their browser window, this begins a DNS query which ultimately leads to a DNS server translating the domain name into an IP address.
+
+What do IP addresses look like? These addresses have a different format based on whether they are IPv4 or IPv6.
+
+What’s the difference between IPv4 and IPv6?
+IPv4 and IPv6 are different versions of the Internet Protocol. IPv4 was implemented in 1983 and is still in use today. The format for IPv4 addresses is four sets of numbers separated by dots, for example: ‘74.125.224.72’. This is a 32-bit format, which means that it allows for 232, or about 4.3 billion, unique IP addresses, which it turns out is not enough for the amount of devices that are now on the Internet. The need for more IP addresses led to the implementation of IPv6*. IPv6 addresses use a more complex format that utilizes sets of numbers and letters separated by single or double colons, for example: ‘2607:f860:4005:804::200e’. This 128-bit format can support 2128 unique addresses. (That computes to a 39-digit number!)
+
+IPv6 provides some other updates to IPv4, including security and privacy improvements. Despite their differences, both IPv4 and IPv6 have been used concurrently on the web for around a decade. The two versions can run in parallel, but special measures had to be implemented to facilitate communications between IPv4 and IPv6 devices. This compromise had to be made because so much of the web is still running on IPv4 addresses.
+
+*What happened to IPv5? IPv5 was an experimental streaming data protocol that was never implemented. It used the same 32-bit formatting as IPv4, so it did not adequately solve the problem of not having enough unique IP addresses. For this reason, IPv6 became the successor to IPv4.
+
+What’s the difference between static IPs and dynamic IPs?
+The limited supply of IPv4 addresses led to the introduction of dynamically assigning IP addresses, which is still a very common practice. Most devices connected to the Internet are assigned temporary IP addresses. For example, when a home user connects to the Internet on their laptop, that user’s ISP assigns them a temporary IP address from a pool of shared IP addresses. This is known as a dynamic IP address. This is more cost-effective for the ISP than assigning each user a permanent, or static, IP address. 
+
+Some ISP customers, such as large enterprises, will pay to maintain a static IP address. (For example, Cloudflare’s 1.1.1.1). However, for most users, having a dynamic IP address is sufficient. When hosting a web server, such as a self-hosted website, API or gaming server, a dynamic IP address can create problems. A change in IP address can cause their DNS queries to fail, effectively taking the resource offline. Luckily, this issue can easily be corrected with Cloudflare’s dynamic DNS.
+
+

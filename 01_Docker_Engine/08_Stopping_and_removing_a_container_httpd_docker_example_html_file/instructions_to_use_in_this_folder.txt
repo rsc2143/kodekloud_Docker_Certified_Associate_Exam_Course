@@ -1,0 +1,12 @@
+Link : https://hub.docker.com/_/httpd
+
+I have made a Dockerfile inside this folder, but somehow I keep getting the following error while trying to copy ./public-html folder to /usr/local/apache2/htdocs/. The error looks something like this:
+docker - failed to compute cache key: ./public-html not found 
+
+Therefore I just ran 
+
+$ docker run -dit --name my-apache-app -p 8080:80 -v "$PWD":/usr/local/apache2/htdocs/ httpd:2.4
+
+and then when I go to http://localhost:8080, I can see the http server running.
+Voila!
+

@@ -1,0 +1,2 @@
+FROM httpd:2.4
+COPY /Users/rohit/Downloads/Study/docker/kodekloud_Docker_Certified_Associate_Exam_Course/01_Docker_Engine/08_Stopping_and_removing_a_container_httpd_docker_example_html_file/public-html/ /usr/local/apache2/htdocs/

@@ -1,0 +1,135 @@
+Stopping and Removing Containers:
+
+Linux Signals:
+Below command will run a web application using Apache 
+
+httpd
+
+Below command will send a signal to the web server process to pause the process. Note that the state of the process is preserved as we just pause the progress.
+
+kill -SIGSTOP <Process_Id>
+Eg:
+kill -SIGSTOP 112323
+using pgrep 
+kill -SIGSTOP $(pgrep httpd)
+kill -19 %(pgrep httpd)
+
+where 19 is the signal number for SIGSTOP'
+
+Below command will send a signal to continue a paused process of web server.
+
+kill -SIGCONT $(pgrep httpd)
+kill -18 $(pgrep httpd)
+where 18 is the signal number for SIGCONT
+
+Below command will stop or terminate the process completely, although this signal leads to a graceful shutdown of the process. There is a possibility that the signal can be ignored, and to ensure that the signal is not ignored, we use SIGKILL as mentioned after this.
+
+kill -SIGTERM $(pgrep httpd)
+
+kill -15 $(pgrep httpd)
+where 15 is the signal number associated with SIGTERM
+
+Below is the command to immeditely terminate the process, and the process cannot ignore this signal.
+
+kill -SIGKILL $(pgrep httpd)
+
+kill -9 $(pgrep httpd)
+
+where 9 is the signal number associated with SIGKILL
+
+
+$ kill -l
+ 1) SIGHUP       2) SIGINT       3) SIGQUIT      4) SIGILL
+ 5) SIGTRAP      6) SIGABRT      7) SIGBUS       8) SIGFPE
+ 9) SIGKILL     10) SIGUSR1     11) SIGSEGV     12) SIGUSR2
+13) SIGPIPE     14) SIGALRM     15) SIGTERM     16) SIGSTKFLT
+17) SIGCHLD     18) SIGCONT     19) SIGSTOP     20) SIGTSTP
+21) SIGTTIN     22) SIGTTOU     23) SIGURG      24) SIGXCPU
+25) SIGXFSZ     26) SIGVTALRM   27) SIGPROF     28) SIGWINCH
+29) SIGIO       30) SIGPWR      31) SIGSYS      34) SIGRTMIN
+35) SIGRTMIN+1  36) SIGRTMIN+2  37) SIGRTMIN+3  38) SIGRTMIN+4
+39) SIGRTMIN+5  40) SIGRTMIN+6  41) SIGRTMIN+7  42) SIGRTMIN+8
+43) SIGRTMIN+9  44) SIGRTMIN+10 45) SIGRTMIN+11 46) SIGRTMIN+12
+47) SIGRTMIN+13 48) SIGRTMIN+14 49) SIGRTMIN+15 50) SIGRTMAX-14
+51) SIGRTMAX-13 52) SIGRTMAX-12 53) SIGRTMAX-11 54) SIGRTMAX-10
+55) SIGRTMAX-9  56) SIGRTMAX-8  57) SIGRTMAX-7  58) SIGRTMAX-6
+59) SIGRTMAX-5  60) SIGRTMAX-4  61) SIGRTMAX-3  62) SIGRTMAX-2
+63) SIGRTMAX-1  64) SIGRTMAX
+
+Docker corresponding commands with linux signals
+
+Similar to 'httpd' command to start the webserver, we will run the following docker command to run httpd image
+
+docker container run --name web httpd
+
+Similar to 'kill -SIGSTOP $(pgrep httpd)' command, we run the following to pause the container
+
+docker container pause web
+
+Similar to 'kill -SIGCONT $(pgrep httpd)' command, we run the following to continue runnning the conainer
+
+docker container unpause web
+
+For terminating the container, docker has the following
+
+docker container stop web
+
+
+For 'docker container stop web' command, docker first sends a SIGTERM signal and gives a grace period to the docker container to terminated. If the container doesnt get terminated, it send the SIGKILL signal to forcefully terminated the container.We can also send a traditional signal to docker like this:
+
+docker container kill --signal=9 web
+
+Note that for 'docker container pause/unpause web', On Linux, this uses the freezer cgroup. Traditionally, when suspending a process the SIGSTOP signal is used, which is observable by the process being suspended. With the freezer cgroup the process is unaware, and unable to capture, that it is being suspended, and subsequently resumed. On Windows, only Hyper-V containers can be paused.
+
+Removing a container:
+
+We can only remove a stopped container. If we use the following command, which is used to remove a container, without first stopping the container, we will get the error:
+
+docker container rm web
+Error response from daemon: You cannot remove a running container 32346bhdasbfdsvfty324. Stop the container before attempting rmeoval or force remove.
+
+So we should follow the following commands:
+docker container stop web
+docker container rm web
+
+We discussed earlier that when we create a container, it creates a conatainer directory inside the /var/lib/docker directory. We can observe this be ls command inside the /var/lib/docker/containers/ directory like this:
+
+ls -lrt /var/lib/docker/containers/
+234234sdsd2123sdfsdf
+
+When we pause,stop or unpause the container, the directory structure remains intact, with the containers still being present. This helps us carry out any other commands on the container.
+
+
+But when we remove a container, it removes the direcotry structure on the computer, thereby freeing up space on the computer which can then be used by other processes.
+So after removing the container, we ls and get nothing like below
+
+docker container rm web
+ls -lrt /var/lib/docker/containers/
+
+Remove all containers
+
+Below command gives us all running containers
+docker container ls -a 
+
+So we append this command on the docker container stop command like this:
+
+docker container stop $(docker container ls -q)
+
+
+We can also use docker container prune command as follows to remove all stopped containers like this:
+
+docker container prune
+WARNING! This will remove all stopped containers
+Are you sure you want to continue? [y/N] y
+Deleting containers:
+234deasfsd
+345asdasdf
+12345sadaw
+34dsaf1213
+
+Remove Flag:
+We may want containers to remove themselves once they perform the task they were supposed to perform. We can do this using the remove flag as follows:
+docker container run --rm ubuntu expr 4+5
+9
+
+
