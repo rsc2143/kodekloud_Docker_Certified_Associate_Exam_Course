@@ -1,0 +1,43 @@
+Container - Restart policies
+
+The below command creates an ubuntu container, runs the expr, gives desired result and then exits
+docker container run ubuntu expr 3+5
+Exited with exit code 0, i.e., exited succesfully
+
+The below command has error in expr, so it does not give desired result and exits
+docker container run ubuntu expr three + 5
+Exited with exit code 1, i.e., with error
+
+The below command stops the container and exits with exit code 0 successfully. Behind the scenes, this sends a SIGTERM signal and then SIGKILL signal and results in a forced termination of the container.
+docker container stop httpd
+
+Depending on whther docker container gracefully shuts down with SIGTERM signal, or has to be forcefully shut down with SIGKILL signal, the container will send either a exit code 0 for graceful shutdown with SIGTERM signal or any exit code except 0 for forceful shutdown with SIGKILL signal.
+The docker container can have a restart policy attached to it while initiating it with the run command. This is helpful if the docker container keeps shutting down unexpectedly, we can restart it again. Or any other use case, like restart a container when the daemon restarts
+
+Case 1: NO(default setting)
+docker container run --restart=no ubuntu
+
+Docker doesnt restart in Case 1
+
+Case 2: ON-FAILURE
+docker container run --restart=on-failure ubuntu
+
+Docker restarts immediately after shutting down due to failure
+
+Case 3: ALWAYS
+docker container run --restart=always ubuntu
+
+Docker restarts whether it exited successfully, on failure or it is manually stopped.When it is manually stopped, it restarts only when docker daemon restarts. Cause otherwise the admin wont be able to stop the container ever, and he definitely has a reason to stop the container.
+
+Case 4: UNLESS-STOPPED
+docker container run --restart=unless-stopped ubuntu
+
+Docker restarts whether it exited successfully, or on failure, but doesn't restart if it is manually stopped.
+
+restart policies work only if container is up for atleast 10 seconds
+
+
+
+
+
+

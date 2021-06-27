@@ -1,0 +1,15 @@
+We can copy files from and to host <-> container
+
+docker container cp <SRC_PATH> <DEST_PATH>
+
+From host to container
+docker container cp /tmp/web.conf webapp:/etc/web.conf
+
+From container to host
+docker container cp webapp:/root/dockerhost /tmp/
+
+
+Copying entire directory
+docker container cp /tmp/app/ webapp:/opt/app
+
+

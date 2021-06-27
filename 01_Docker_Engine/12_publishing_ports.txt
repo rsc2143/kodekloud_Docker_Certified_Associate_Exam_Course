@@ -1,0 +1,23 @@
+Run - PORT mapping
+
+docker run kodekloud/simple-webapp
+
+Output of above is as following: 
+This is a sample web application that displays a colored background. 
+ A color can be specified in two ways. 
+
+ 1. As a command line argument with --color as the argument. Accepts one of red,green,blue,blue2,pink,darkblue 
+ 2. As an Environment variable APP_COLOR. Accepts one of red,green,blue,blue2,pink,darkblue 
+ 3. If none of the above then a random color is picked from the above list. 
+ Note: Command line argument precedes over environment variable.
+
+
+No command line argument or environment variable. Picking a Random Color =blue
+ * Serving Flask app "app" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+* Running on http://0.0.0.0:8080/ (Press CTRL+C to quit)
+
+

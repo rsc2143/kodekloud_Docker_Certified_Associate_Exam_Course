@@ -1,0 +1,27 @@
+This file contains notes from Docker Networking tutorial on 'Docker for the Absolute Beginner - Hands On' on Kodekloud. Link for the tutorial is : https://kodekloud.com/courses/296044/lectures/4554737
+
+Docker Networking:
+When you install Docker, it creates three networks automatically:
+- Bridge
+- none
+- host
+
+Bridge network
+Bridge is the default network the container gets attached to. If you would like to associate the container with any other network, you specify the network information using the network command line parameter like below:
+
+docker run ubuntu --network=none
+Above command attaches the docker network to none network
+
+docker run ubutu --network=host
+Above command attaches the docker network to host network
+
+docker run ubuntu
+Above command defaults the network to bridge network
+
+The bridge network is a private internal network created by docker on the host. All containers attach to this network by default and they get an internal IP address usually in the range 172.17 series. The containers can access each other using this internal IP if required.To access any of these containers from the outside world, map the ports of these containers to ports on the docker host.
+Another way to access the containers externally is to associate the container to the host network. This takes out any network isolation between the docker host and the docker container. This means that if we were to run a web server on Port 5000 in a web container, it is automatically accessible on the same port externally without requiring any port mapping as the web container uses host's network.This would also mean that unlike before, you will now not be able to run multiple web containers on the same host on the same port as the ports are now common to all containers in the host network.
+
+None network
+With the none network, containers are not attached to any network and does'nt have any access to the external network or other containers. They run in an isolated network
+
+
