@@ -1,0 +1,65 @@
+Docker uses namespaces to isolate workspace. The following are created in their own namespace, thereby providing isolation between containers:
+1. process ids, 
+2. network, 
+3. interprocess communications, 
+4. mounts and 
+5. unix timesharing
+
+Process namespaces
+
+Whenever a linux system boots up, it starts with just one process with a process ID of one. This is the root process and kicks off all other processes in the system. By the time the system boots up completely, we have a handful of processes running. This can be seen by running the ps command to list all the running processes. The process IDs are unique and two processes cannot have the same process ID. If we were to create a container which is like a child system within the current system, the child system needs to think that it is an independent system on its own and has its own set of processes originating from a root process with a process ID of one. But we know that there is no hard isolation between the containers and the underlying host. So the processes running inside the container are, in face, running on the underlying host. So two processes cannot have the same process ID of one. This is where namespaces come into play. 
+
+With process ID namespaces, each process can have multiple process IDS associated with it. For example, when the processes start within the container, its actually just another set of processes on the base Linux system, and it gets the next available process ID on the host, in this case, 5 and 6 on the host. However, they also get another process ID, 1 and 2, in the container namespace, which is only visible inside the container. So the container thinks that it has its own root process tree and so it is an independent system.
+
+How can we see the above demarcation on the host?
+Let us start with a host with docker installed on it. This host has a set of its own processes running such as a number of operating system processes, the Docker daemon itself, the SSH server etc. 
+We will now run an ubuntu docker container that runs a process that sleeps for an hour.
+
+docker run ubuntu sleep 3600
+
+We have learned that unlike virtual machines, containers are not completely isolated from their host. Containers and the host share the same kernel. Containers are isolated using namespaces in Linux. The host has a namespace and the containers have their own namespace. All the processes run by the container are in fact run on the host itself, but in their own namespace. As far as the docker container is concerned, it is in its own namespace and it can see its own processes only. It cannot see anything outside of it or in any other namespace. So when we list the processes from within the docker container itself, we see the sleep process with a process ID of one.
+For the docker host, all processes of its own as well as those in the child namespaces are visible as just another process in the system. So when we list the processes on the host, we see the list of processes including the sleep command but with a different process ID. This is because the processes can have different process IDs in different namespaces and thats how Docker isolates containers within a system. This is called process isolation.
+
+Users in context of security
+
+The docker host has a set of users, a root user, as well as a number of non root users. By default, docker runs processes within containers as the root user. This can be seen as the output of the commands we ran earlier. Both within the container as well as outside the container on the host, the process is run as the root user.
+Now, if we do not want the process within the container to run as the root user, we may set the user using the user option within the Docker run command and specify the new user ID.
+
+docker run --user=1000 ubuntu sleep 3600
+
+The command "ps aux" now shows 1000 as the user id associated with the command "sleep 3600" instead of showing "root" as the user id associated with "sleep 3600".
+
+Another way to enforce security is to have this defined in the docker image itself at the time of creation. For example, we will set the USER to 1000 in the docker file and then build the custom image.
+
+./Dockerfile
+FROM ubuntu
+USER 1000
+
+docker build -t my-ubuntu-image .
+
+We can now run this image without specifying the user ID and the process will be run with a user ID 1000.
+
+docker run my-ubuntu-image sleep 3600
+
+ps aux shows user 1000 instead of root
+
+What happens when we run a container as root user? Is the root user within the container the same as the root user within the host? Can the process inside the container do anything that the root user can do on the system? If so, isnt that dangerous?
+
+Docker implements a set of security features that limits the abilities of the root user within the container. So the root user within the container isnt like the root user on the host. 
+
+Docker uses Linux capabilities to implement the above. Root user is the most powerful user on the system and can do anything. We can see the full list of capabilities of the root user at the following location:
+/usr/include/linux/capability.h
+
+We can now control and limit what capabilities are available to a user.By default docker runs a container with a limited set of capabilities, so the processes running within a container do have the priveleges to do tasks like rebooting the host or perform operations that can disrupt the host or other containers running on the same host. If we wish to override this behaviour and provide additional proveleges than what is available, we use the cap-add option in the docker run command as below.
+
+docker run --cap-add MAC_ADMIN ubuntu
+
+Similarly, we can drop privileges as well, using the --cap-drop option as below:
+
+docker run --cap-drop KILL ubuntu
+
+In case we wish to run the container with all privileges enabled, we use the privileged flag as below:
+
+docker run --privileged ubuntu
+
+

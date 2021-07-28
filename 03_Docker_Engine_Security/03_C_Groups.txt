@@ -1,0 +1,9 @@
+CGroups 
+
+CGroups are control groups that allow to allocate resources such as CPU, memory, network, Block IO or bandwidth among different processes within our host.
+Docker uses Cgroups to share or limit resources among different containers.
+
+
+
+
+

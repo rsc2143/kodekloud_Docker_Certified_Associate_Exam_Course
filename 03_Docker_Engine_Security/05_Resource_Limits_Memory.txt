@@ -1,0 +1,36 @@
+How memory allocation works on a system:
+
+Every system has a RAM, or Random Access Memory or physical memory. Unless restricted, a process can consume as much memory on a Linux host as required. When all the physical memory is used up, Linux starts using swap space configured on the disk for additional memory. The swap space, is a dedicated space on the physical disk and not on the RAM and that can be used temporarily as RAM or memory. When there is no more memory available on the system, it throws an out of memory exception or OOM, and starts killing processes to free up memory.
+
+By default, there are no restrictions applied on the container and it can use as much memory as available and further go on to consuming swap space as well.
+
+To restrict memory usage of a container, use the memory option while creating a container as follows:
+
+docker container run --memory=512m webapp
+
+
+Here m stands for MegaBytes. Note the following abbreviations:
+b for Bytes
+k for KiloBytes
+m for MegaBytes
+g for GigaBytes 
+
+
+In above example, we have set 512 MegaBytes for webapp container. This is a hard limit, unlike the CPU restrictions. 
+If a container consumes more memory than its limit, then it will be killed with an Out Of Memory exception. Whereas if a container tries to consume more CPU than its assigned, its just throttled, and not kiiled. In case of memory, there is no option to throttle the memory, so process is killed. 
+
+Setting --memory=512m allows container to consume 512Mb of RAM as well as 512Mb of swap space as well, so container gets a total of 1Gb memory effectively.
+
+To limit the container's use of swap space, we can use --memory-swap option as follows:
+
+docker container run --memory=512m --memory-swap=512m webapp2
+
+Here --memory-swap option is the sum of memory as well as swap memory, and not just swap memory. 
+
+So in the above example, we have swap space = 512m - 512m = 0Mb of memory 
+
+If we wish to configure 256Mb of swap space, we will give --memory-swap=768m as follows:
+
+docker container run --memory=512m --memory-swap=768m webapp3
+
+

@@ -1,0 +1,118 @@
+Anyone with access to docker daemon can:
+1. delete exisiting containers hosting applications
+2. delete volumes storing data
+3. run containers to run their applications (bit coin mining for example)
+4. gain root access to the host system by running a privileged container. On gaining root access, they can target other systems in the environment and the whole network itself.
+
+By default, docker exposes the docker daemon service within the host only on a unix socket and this prevents anyone from outside to access the docker daemon.
+
+Note that we are talking about the docker daemon service itself and not the applications deployed by docker itself. The applications deployed can still be accessed as long as we publish ports on those applications from the host. 
+
+Only someone who is logged in to the host has access to the docker service. So we should first secure the host as follows:
+1. disable password based authentication.
+2. enable SSH key based authentication
+3. determine users who need access to the server.
+4. enabling root access to only certain users.
+5. disable unused ports
+
+We also discussed about configuring external access to the docker daemon. So at times we may have to allow external access to the docker daemon from another management host, or say, a user's laptop. Or for intergration purposes with other tools. This must be done only when its absolutely necessary.
+
+For this, we add the hosts option to the /etc/docker/daemon.json file like this
+
+/etc/docker/deamon.json
+{
+    "hosts": ["tcp://192.168.1.10:2375"]
+
+
+}
+
+This now enables access to the docker daemon from outside of the docker host itself through an interface on our host.
+
+If we have to do this, we have to make sure we expose the docker daemon on interfaces that are private and only accessible from within our organization.
+If host is exposed to public interface, we have to make sure that the daemon is not exposed on those interfaces. By allowing external access, we must also secure communication with TLS certificates. For this, we configure a Certificate Authority, a CA, and create certificates for the server. We call it "server.pem" and "serverkey.pem". We place these on the Docker host and configure the daemon.json file to read them along with setting the "tls" option to true.
+
+/etc/docker/daemon.json
+{
+    "hosts": ["tcp://192.168.1.10:2376"]
+    "tls": true,
+    "tlscert": "/var/docker/server.pem",
+    "tlskey": "/var/docker/serverkey.pem"
+}
+
+The port now is 2376 instead of 2375. With this, anyone from outside of the docker host can access the docker API and target it with the docker commands by simply setting the docker host environment variable to point to this host. With encryption enabled, we must set the TLS flag to initiate secure connection. For this, we set the DOCKER_TLS environemnt variable to true.
+
+export DOCKER_TLS=true
+export DOCKER_HOST="tcp://192.168.1.10:2376"
+docker ps
+
+Note that any of these environemnt variables can also be passed in as a command line parameter like this
+
+export DOCKER_HOST="tcp://192.168.1.10:2376"
+docker --tls ps
+
+With this setup, the docker CLI on the docker client and the docker server starts communicating in an encrypted manner. However, there is still no authentication, meaning anyone who knows that the docker daemon is being exposed on port 2376 on this host can still access our docker daemon by simply setting the DOCKER_TLS environment variable to true and pointing the Docker host environment variable to our host and they can start deploying containers on our host or delete existing containers.
+
+So the next step is to enable certificate-based authentication. For this, we copy the CA cert to the Docker deamon server-side and configure "tlscacert" parameter in the daemon json file along with the "tlsverify" flag to true. The "tlsverify" flag is what enables authetication and the "cacert" will be used to verify certificates of clients when they send them.
+
+/etc/docker/daemon.json
+{
+    "hosts": ["tcp://192.168.1.10:2376"]
+    "tls": true,
+    "tlscert": "/var/docker/server.pem",
+    "tlskey": "/var/docker/serverkey.pem"
+    "tlsverify": true,
+    "tlscacert": /var/docker/caserver.pem
+}
+
+So our clients now need certificates signed by the CA. Thats the only way that they can access the docker daemon. So we generate certificates for our clients called "client.pem" and "clientkey.pem", and share that securely with the client-server that wants to connect to the host, along with the "cacert.pem", the certificate of the CA. On the client side, we set the Docker TLS verify flag to true, instead of the TLS flag we set earlier, and then we either pass in the client certificate through the command line parameter, like below
+
+export DOCKER_TLS_VERIFY=true
+export DOCKER_HOST="tcp://192.168.1.10:2376"
+docker --tlscerts=<> --tlskey=<> --tlscacert=<> ps
+
+We can also, alternatively, drop the certificate into the .docker directory under the user's home directory. From there, the docker command will automatically pick up the certificates. 
+
+Now, only clients with signed certificates from CA server can access the Docker deamon.
+
+Remember, the TLS option alone does not authenticate, it only enables encryption and anyone can still access the Docker deamon with the TLS flag enabled. The TLS verify option is what enables authentication.
+
+To summarize, 
+1. Without Authentication 
+Without authentication and just to enable encryption, we configure the TLS flag and the TLS certificate and the key flag on the server. On the client side, we just set the TLS flag to true. This can be set on the command line from the --tls option set to true, or the environment variable DOCKER_TLS set to true. Below is how to do it
+
+On server side
+
+/etc/docker/daemon.json
+{
+    "hosts": ["tcp://192.168.1.10:2376"]
+    "tls": true,
+    "tlscert": "/var/docker/server.pem",
+    "tlskey": "/var/docker/serverkey.pem"
+}
+
+On the client side, we do either
+
+export DOCKER_HOST="tcp://192.168.1.10:2376"
+docker --tls ps
+
+or we do
+
+export DOCKER_TLS=true
+export DOCKER_HOST="tcp://192.168.1.10:2376"
+docker ps
+
+2. With authentication
+With authentication on the server-side, we set the TLS verify flag along with the server certificate and key and the CA certificate as well. 
+
+On the client side, we set the TLS verify flag to true along with the TLS certificate,TLS key, and TLS CA certificate passed in 
+
+- either as command line parameter
+
+docker --tlsverify --tlscert=<> --tlskey=<> --tlscacert=<> ps
+
+- or environment variable
+  
+export DOCKER_TLS_VERIFY=true
+docker --tlscerts=<> --tlskey=<> --tlscacert=<> ps
+
+- or placed in the .docker directory under the user's home directory.

@@ -1,0 +1,63 @@
+How to restrict resource consumption using containers?
+
+
+For the host, containers are just another process running on the host. So by default, there are no restrictions on how much resources the containers can use. So if resources are fully utilized by a continer, the kernel starts killing other containers or even native processes to fund the container taking up the resources.
+
+How multiple processes compete for CPU resources:
+
+If we have two processes and have a single CPU core/single CPU, in the event of both processes needing same resources, the following does not happen:
+- wait for one process to finish for other one to begin
+- split resources in half
+Sharing of CPU resources is done as follows:
+- Each process gets equal amount of CPU time
+- First process runs for a few cycles
+- Second process starts, while the first process waits for the second process to execute for its allocated cycles
+- First process starts, while second process waits
+This continues until both processes end. The time allocated for each process is usually in microseconds, so it goes unnoticed and the user thinks that both processes are running concurrently.
+
+If one of the process is higher priority, then we can assign more CPU shares for it.
+
+How CPU shares are assigned:
+For example, if we have two processes running, and we assign one process 1024 shares and 512 for the other process, the first process gets double the time of CPU.
+Important note : These are not hard limits, and the limits are relative to each other. That is, its not like there are a total 1500 total shares of CPU shares to be used by all processes running.
+Also, if there was just one process of 512 CPU shares allocated to it, it still gets to use the entire time of the CPU, as if it had the full share of the CPU. So shares only matter when there is competition between processes.
+
+Who is responsible for managing the CPU resources and managing the time of the CPU between different processes:
+A process scheduler is responsible for managing the CPU resources and managing the time of the CPU between different processes.
+ 
+
+The default scheduler on Linux is the CFS process scheduler, or the Completely Fair Scheduler.
+Docker version 1.13 and higher support another scheduler known as Real Time Scheduler. We will stick with discussing CFS scheduler for now.
+The same approach is used with containers as well. Cgroups or control groups is what enables restricting resources to containers. Each container gets a CPU share of 1024 assigned by default, meaning that all containers get equal amount of CPU time.
+To modify the CPU share of a particular container, we use the "--cpu-shares" option while creating the container as follows:
+
+docker container run --cpu-shares=512 webapp4
+
+In the above case, the "webapp4" is created with just 512 shares of the CPU, whereas all the other containers (assume 3 containers are already running on the host) are created with the default 1024 shares of the CPU. So all the 3 get equal share of the CPU, while the fourth container called "webapp4" gets a lower share of the CPU.
+ To remember : This does not limit the amount of CPU that the containers consume. The CPU shares option only defines how the toal available CPU on the host is shared between the containers on the host.All the containers together can end up consuming all of the CPU cycles available on the host. 
+
+Options to restrict or limit CPU usage by containers:
+- First way is to restrict certain containers to specific CPUs on the host. For example, CPUS are numbered from 0, and we have quadcore system with four CPU cores numbered 0,1,2,3. So we can use the "--cpuset-cpus" option and specify the CPU numbers, either separated by a command or specified using a hyphen for a range.
+
+Example of "--cpuset-cpus" options
+
+docker container run --cpuset-cpus=0-1 webapp1
+docker container run --cpuset-cpus=0-1 webapp2
+docker container run --cpuset-cpus=2 webapp3
+docker container run --cpuset-cpus=2 webapp4
+
+In this example, the containers webapp1 and webapp2 use CPUs 0 and 1, while webapp3 and webapp4 use CPU 2. So CPU 3 is not used by any container and is free to be used by other processes.
+
+- Second way/ newer option from Docker 1.13 is to use the CPUs count option. Out of the total CPU cycles available of all four CPUs, we can set any value from 0 to 4. For example, we can set value 2.5 as below:
+
+docker container run --cpus=2.5 webapp5
+
+In the above example, the container webapp5 can only use 2.5 out of 4, i.e., 62.5% of the total CPU cycles available on the host. This is a hard limit, so the container webapp5 cant use any more CPU resources.
+
+We can also update the CPU count of an existing container using the update option as follows:
+
+docker container update --cpus=0.5 webapp5
+
+
+
+

@@ -1,0 +1,21 @@
+What not to do while containerizing applications:
+
+1. Keep applications modular, i.e., do not build images that combine multiple applications into one like a webserver, db and some other packages. Build separate modular images which solve a single problem like an image for a webserver, an image for a db, etc. Each image can have its own libraries and dependencies and not worry about the other application.
+These different images when deployed can talk to each other and form a single service, and each component can scale up or down without having to scale the other components.
+
+2. Do not store data into the container as containers are supposed to be ephemeral in nature. We should be able to destroy and bring them back online and lose the data along the container. Always store the data in an external volume or some kind of caching service like Redis.
+
+3.When creating images, make sure to keep the size of images as small as possible. This will allow the images to 
+	a. pull faster from remote repositories 
+	b. spin up more instances easily as required.
+
+4. Find an official minimal image as base image and build on that.
+
+5. Only install necessary packages and delete all other libraries not reuired.
+
+6. At times, development environments may have debug tools and other packages required for development. These need not be part of production. So they might not be required in production images.
+So we can maintain different images for different environments:
+	a. Developlemt environment can have image with debug tools
+	b. Production environment can have lean image.
+
+7. Use multi stage builds to create lean production ready images.

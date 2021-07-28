@@ -1,0 +1,142 @@
+First we login to the AWS EC2 instance using the following command under key value pair directory:
+
+ssh -i "dockerstudykeyvaluepair.pem" centos@ec2-3-15-232-203.us-east-2.compute.amazonaws.com
+
+Then once inside the AWS EC2 instance, we login to the root user as follows:
+
+[centos@ip-172-31-25-209 ~]$ systemctl start docker
+
+Then we start the docker daemon using systemctl start and check the status using systemctl status as follows
+
+[root@ip-172-31-25-209 ~]# systemctl start docker
+[root@ip-172-31-25-209 ~]# systemctl status docker
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/usr/lib/systemd/system/docker.service; disabled; vendor preset: disabled)
+   Active: active (running) since Mon 2021-07-26 08:27:29 UTC; 11s ago
+     Docs: https://docs.docker.com
+ Main PID: 1283 (dockerd)
+    Tasks: 8
+   Memory: 163.9M
+   CGroup: /system.slice/docker.service
+           └─1283 /usr/bin/dockerd -H fd:// --con...
+
+Jul 26 08:27:27 ip-172-31-25-209.us-east-2.compute.internal dockerd[1283]: ...
+Jul 26 08:27:27 ip-172-31-25-209.us-east-2.compute.internal dockerd[1283]: ...
+Jul 26 08:27:28 ip-172-31-25-209.us-east-2.compute.internal dockerd[1283]: ...
+Jul 26 08:27:28 ip-172-31-25-209.us-east-2.compute.internal dockerd[1283]: ...
+Jul 26 08:27:28 ip-172-31-25-209.us-east-2.compute.internal dockerd[1283]: ...
+Jul 26 08:27:28 ip-172-31-25-209.us-east-2.compute.internal dockerd[1283]: ...
+Jul 26 08:27:29 ip-172-31-25-209.us-east-2.compute.internal dockerd[1283]: ...
+Jul 26 08:27:29 ip-172-31-25-209.us-east-2.compute.internal dockerd[1283]: ...
+Jul 26 08:27:29 ip-172-31-25-209.us-east-2.compute.internal systemd[1]: ...
+Jul 26 08:27:29 ip-172-31-25-209.us-east-2.compute.internal dockerd[1283]: ...
+Hint: Some lines were ellipsized, use -l to show in full.
+
+CLI commands for 
+
+1. Memory limits on Centos AWS image
+  
+  a. We first create a container with no memory restrictions as follows
+
+[root@ip-172-31-25-209 ~]# docker container run -itd --name=testone ubuntu
+Unable to find image 'ubuntu:latest' locally
+latest: Pulling from library/ubuntu
+a31c7b29f4ad: Pull complete 
+Digest: sha256:b3e2e47d016c08b3396b5ebe06ab0b711c34e7f37b98c9d37abe794b71cea0a2
+Status: Downloaded newer image for ubuntu:latest
+4b919e1509d739141ca9503194a3cfd30f40bd780b72bf8141b059f494a0b9da
+[root@ip-172-31-25-209 ~]# docker container inspect testone | grep -i mem
+            "Memory": 0,
+            "CpusetMems": "",
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+
+  b. We then create an container with 100mb memory and additional 100mb swap as follows:
+
+[root@ip-172-31-25-209 ~]# docker container run -itd --name=testtwo --memory=100m ubuntu
+850c9fda99e3fb8ed77ee244caa1fee951957b9c68a470bbc086c98f1949a1b9
+[root@ip-172-31-25-209 ~]# docker container inspect testtwo | grep -i mem
+            "Memory": 104857600,
+            "CpusetMems": "",
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 209715200,
+            "MemorySwappiness": null, 
+
+  c. We then create a container with memory of 100mb and unlimited swap using --memory-swap=-1 option as follows:
+
+[root@ip-172-31-25-209 ~]# docker container run -itd --name=testthree --memory=100m --memory-swap=-1 ubuntu
+467ab9c6137892aed2f09ddc287def648594e226a66e50c45f1c7514d922113e
+[root@ip-172-31-25-209 ~]# docker container inspect testthree | grep -i mem
+            "Memory": 104857600,
+            "CpusetMems": "",
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": -1,
+            "MemorySwappiness": null,
+
+  d. We then create a container with memory atleast 50mb and maximum memory of 100mb, along with unlimited swap memory as follows:
+
+[root@ip-172-31-25-209 ~]# docker container run -itd --name=testfive --memory=100m --memory-swap=-1 --memory-reservation=50m ubuntu
+c451935602c4f80facbecb7f45b80e8a5dfd929f31a1cb43d2933e262b5360dc
+[root@ip-172-31-25-209 ~]# docker container inspect testfive | grep -i mem
+            "Memory": 104857600,
+            "CpusetMems": "",
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 52428800,
+            "MemorySwap": -1,
+            "MemorySwappiness": null,
+
+2. CPU limits on Centos AWS image
+
+We first check the number of cores available on the system using nproc command:
+
+[root@ip-172-31-25-209 ~]# nproc
+1
+
+We see we have only 1 core.
+
+  a. We set the cpu limit to use one cpu core 
+
+[root@ip-172-31-25-209 ~]# docker container run -itd --cpus=1 --name=testcpuone ubuntu
+4d2ba8ce3f8ad1846206b1a2aebdc4ad3c1ec4bf6fccd858718964315eed28cd
+[root@ip-172-31-25-209 ~]# docker container inspect testcpuone | grep -i cpu
+        "Name": "/testcpuone",
+            "CpuShares": 0,
+            "NanoCpus": 1000000000,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "CpuCount": 0,
+            "CpuPercent": 0,
+
+  b. We then set the cpu limit to one cpu atleast for the container, but it fails as we have only one core. Command is as follows:
+
+[root@ip-172-31-25-209 ~]# docker container run -itd --cpuset-cpus="1" --name=testcputwo ubuntu
+docker: Error response from daemon: Requested CPUs are not available - requested 1, available: 0.
+See 'docker run --help'.
+
+If we had more CPU cores, we would not have got this error and would have created a container. If we had that container and would have inpected it, we would have got 
+
+[root@ip-172-31-25-209 ~]# docker container inspect testcputwo | grep -i cpu
+        "Name": "/testcpuone",
+            "CpuShares": 0,
+            "NanoCpus": 0,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "1",
+            "CpusetMems": "",
+            "CpuCount": 0,
+            "CpuPercent": 0,
+

@@ -1,0 +1,193 @@
+Example:
+We have a nodejs directory which we want to build into a package. The nodejs package directory looks as follows
+
+tree my-application
+.
+├── LICENSE
+├── README.md
+├── app.js
+├── config
+├── core
+├── db
+├── package.json
+├── public
+├── routes
+├── services
+└── tests
+
+The npm command can help build this into a distributable package using the following command
+
+npm run build
+
+This builds the package into the distribution directory and all folders and files are packaged into a distributed format into the dist directory. 
+
+So after npm run build command, tree will give us the following output
+
+tree my-application
+.
+├── LICENSE
+├── README.md
+├── app.js
+├── config
+├── core
+├── db
+├── package.json
+├── public
+├── routes
+├── services
+└── tests
+└── dist
+
+Now we can use this to build a container using a docker file. The contents of the docker file are as follows
+
+Dockerfile
+FROM nginx
+COPY dist /usr/share/nginx/html
+CMD ["nginx","-g","daemon off;"]
+
+Now the folder looks like:
+
+tree my-application
+.
+├── Dockerfile
+├── LICENSE
+├── README.md
+├── app.js
+├── config
+├── core
+├── db
+├── package.json
+├── public
+├── routes
+├── services
+└── tests
+└── dist
+
+
+Once done, we run the docker build command as follows:
+docker build -t my-app .
+
+This command creates an image of our application. This way, we have containerized our application and it can be run anywhere. 
+These are the two stages in our build:
+1. First, we build the NPM package
+2. Second, we containerize it for production.
+
+Note that the build happens locally on the development server using the packages and libraries on the local server available at that time. It is possible that at some point in the future, it may get outdated and you may run into issues with build. It is not guaranteed that you will get a clean build all the time. Also, if you were to build other development servers in the future, you will need to ensure that it has all the prerequisites and dependencies required to build this application and that the versions across all the different development servers or build servers are an exact match and that is a challange. 
+
+A better approach is to use docker build itself for the build. For this, we use a Dockerfile to containerize the build process itself. So for this, 
+1. We create a new Dockerfile named Docker.builder 
+	a. with node as the base image
+	b. copy over the application files into the image  
+	c. we install the dependencies using the npm install command 
+	d. build using the npm run build command.
+
+So our Dockerbuild.builder file is as follows:
+
+Dockerfile.builder
+FROM node
+COPY . .
+RUN npm install
+RUN npm run build
+
+So our folder looks like this now
+
+tree my-application
+.
+├── Dockerfile.builder
+├── Dockerfile
+├── LICENSE
+├── README.md
+├── app.js
+├── config
+├── core
+├── db
+├── package.json
+├── public
+├── routes
+├── services
+└── tests
+└── dist
+
+We can now use the docker build command as follows
+
+docker build -t builder .
+
+This generates the build the same way all the time. We can have this build run on any server and it will build the same way.
+
+So now we have two docker files, 
+1. First one that we call the builder used for generating a clean build of our application
+2. Second one that is using that build for creating a production ready image.
+
+Going forward, every time we make a change to our application, we first build the first docker file to create a new build and then create a second docker file to create a runnable image ready for production.
+
+The first docker file named Dockerfile.builder builds an image called builder because that's the tag that we specify. But we dont really need that docker image. What we need from that image is the dist directory from that image because that is used for building the production ready image on the second step. That dist directory is within the first image which we need to extract that directory and make it available before building the second image. This follows a three step process as follows:
+
+1. We have the Dockerfile.builder with contents specified earlier, and are as follows:
+Dockerfile.builder
+FROM node
+COPY . .
+RUN npm install
+RUN npm run build
+
+Run the following command
+docker build -t builder .
+
+2. create the following list of instructions in a .sh file and run it. This creates a cointainer from the first image, copies dist directory to the local host and then removes the builder conatiner. 
+
+copy-dist-from-builder.sh
+docker container create --name builder builder
+docker container cp builder:dist ./dist
+docker container rm -f builder
+
+3. The dist directory is now available locally to be used in the final step when the production ready container is build. This container for production is build from Dockerfile already mentioned, but is given again below
+
+Dockerfile
+FROM nginx
+COPY dist /usr/share/nginx/html
+CMD ["nginx", "-g", "daemon off;"]
+
+We then run the following command
+docker build -t my-app .
+
+--------------------------
+Multi Stage Builds
+--------------------------
+We can condense the complex process above into a single file as follows
+
+Dockerfile
+FROM node
+
+COPY . .
+RUN npm install
+RUN npm run build
+
+FROM nginx
+COPY --from=0 dist /usr/share/nginx/html
+CMD["nginx","-g","daemon off;"]
+
+or 
+
+Dockerfile
+FROM node as builder 
+COPY . .
+RUN npm install
+RUN npm run build
+
+FROM nginx
+COPY --from=builder dist /usr/share/nginx/html
+CMD["nginx","-g","daemon off;"]
+
+We can then run the command
+docker build -t my-app .
+
+We can also build just a specific stage of the build in the Dockerfile as follows
+docker build --target builder -t my-app .
+
+Summary of how multi-stage builds help us:
+1. Optimize Dockerfiles and keeps them easy to read and maintain
+2. Helps keep size of images low
+3. Helps avoid having to maintain multiple Dockerfiles - Builder and Production
+4. No intermediate images
+
+
+
