@@ -1,0 +1,142 @@
+docker network ls
+
+NETWORK ID     NAME              DRIVER    SCOPE
+c3ec727b67cd   bridge            bridge    local
+d2f8e7d8fa12   host              host      local
+57ec7ec88790   jenkins           bridge    local
+88f438dd59a9   mongodb_default   bridge    local
+0785bb8af44d   none              null      local
+
+To view the network settings and IP address assigned to each network, we run the docker network inspect command as follows
+
+docker network inspect c3ec
+
+
+[
+    {
+        "Name": "bridge",
+        "Id": "c3ec727b67cdcd70ee3b3ae8748b92fff48ad0e77a4d82ea9d9556cd6c0f0ffe",
+        "Created": "2021-07-30T02:48:55.060732642Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.17.0.0/16",
+                    "Gateway": "172.17.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {},
+        "Options": {
+            "com.docker.network.bridge.default_bridge": "true",
+            "com.docker.network.bridge.enable_icc": "true",
+            "com.docker.network.bridge.enable_ip_masquerade": "true",
+            "com.docker.network.bridge.host_binding_ipv4": "0.0.0.0",
+            "com.docker.network.bridge.name": "docker0",
+            "com.docker.network.driver.mtu": "1500"
+        },
+        "Labels": {}
+    }
+]
+
+In the above output, the IPAM section refers to IP Address Management. As we can see, the bridge network gets default subnet in the range of 172.17.0.0/16 and gateway of 172.17.0.1. We can also see the containers attached to this network, but for now, no container is attached to this network. If we inspect the host network with ID d2f8e7d8fa12, we see 5 containers attached to it as seen below
+
+docker network inspect d2f8e
+
+
+[
+    {
+        "Name": "host",
+        "Id": "d2f8e7d8fa120db2e6a443a5b05fa1f38e44e98d2a941331edc1ac83e229d80f",
+        "Created": "2020-05-24T15:15:06.229483728Z",
+        "Scope": "local",
+        "Driver": "host",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": []
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {
+            "03aeb02f542fa97d022af49c0bb349517c7713134f8914c6cc9792ec9bb1510c": {
+                "Name": "k8s_POD_kube-apiserver-docker-desktop_kube-system_4ac4b5ee26e7058a1ed090c12123e3a6_24",
+                "EndpointID": "eee2464ee96cae42dfe2b4c97bcac2e0fa7baf0420431f7b40fd87f4855aafaa",
+                "MacAddress": "",
+                "IPv4Address": "",
+                "IPv6Address": ""
+            },
+            "162cdf5582b10544c48bd2093f9ab1c1533892a0a83da0ceb0fce0d176c41e27": {
+                "Name": "k8s_POD_kube-scheduler-docker-desktop_kube-system_57b58b3eb5589cb745c50233392349fb_24",
+                "EndpointID": "4463b55bea45084eeeaf26179b35889f0c432257d4ed66647e13d86867b5d21d",
+                "MacAddress": "",
+                "IPv4Address": "",
+                "IPv6Address": ""
+            },
+            "3345ca828ca4b77efa3e8268d91edd8642d01597b035ad77aabbc552f5086705": {
+                "Name": "k8s_POD_etcd-docker-desktop_kube-system_127f1e78367a800caa891919cc4b583f_24",
+                "EndpointID": "40be700a73a4633983aac3d5d5150a30024de9197bd95816bbb35ffde35c2d9a",
+                "MacAddress": "",
+                "IPv4Address": "",
+                "IPv6Address": ""
+            },
+            "3b5cbffd39263d207bdd6c1a31d0111d2127b6820566f75fd26d084d9d5d3674": {
+                "Name": "k8s_POD_kube-controller-manager-docker-desktop_kube-system_77e9d7fdbb29bf4b5600ab5fbb368a2b_24",
+                "EndpointID": "d865ee306e71ac4a8ef696be0437f6528f7fc74c276d118e7f956b1ae823ece6",
+                "MacAddress": "",
+                "IPv4Address": "",
+                "IPv6Address": ""
+            },
+            "c1a7a62bce4dda7a50257033d0c265720bf7e5a9e6964eb81c7100936fb251e1": {
+                "Name": "k8s_POD_kube-proxy-gdmkn_kube-system_8a311b7e-9634-4d6c-aae7-4f8cc9a814f6_23",
+                "EndpointID": "11d7658a3f694f41796ffd7df830d6267ab4270592d62ccc4dbc486b070684be",
+                "MacAddress": "",
+                "IPv4Address": "",
+                "IPv6Address": ""
+            }
+        },
+        "Options": {},
+        "Labels": {}
+    }
+]
+
+We can see that the host network has 5 containers attached to it, as seen in the output above.
+
+Custom Network
+
+To connect the container to a custom network, use the docker network connect curtom-net my-container
+
+docker container connect custom-net my-container
+
+We may connect a single container to multiple networks. 
+
+Similarly, we can disconnect a network from the container using the docker network disconnect command as follows
+
+docker network disconnect custom-net my-container
+
+We can also remove a network using the docker network rm command as follows:
+
+docker network rm custom-net
+
+To remove all the unused networks, we run the docker network prune command as follows
+
+docker network prune
+
+

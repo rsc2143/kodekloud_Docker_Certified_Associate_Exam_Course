@@ -20,4 +20,84 @@ No command line argument or environment variable. Picking a Random Color =blue
  * Debug mode: off
 * Running on http://0.0.0.0:8080/ (Press CTRL+C to quit)
 
+We can see that the above web appication and its server are running.
+
+Question
+How does a user access our application?
+
+Answer
+Port: We can see that the application is listening on port 8080. Therefore, we can access this application using the port 8080. 
+IP: For the IP, there are two options available
+a. Use the IP of the docker container. Every docker container gets an IP address assigned to it by default, which is the internal IP address.
+We can get that internal ip by inspecting the container as follows:
+
+docker inspect 123dgwyseg12 | grep -i IPAddress
+
+The above command gives us the following result
+
+            "SecondaryIPAddresses": null,
+            "IPAddress": "172.17.0.2",
+                    "IPAddress": "172.17.0.2",
+
+We can see that the internal IP address is 172.17.0.2. Note that this is the internal IP address and is only accessible within the docker container. If the user wants to access the content from internal ip 172.17.0.2, he would have to open the interactive terminal of the docker container and then get the access the ip from within the container as follows:
+- first, open the container shell using docker exec command as follows:
+(base) rohit@Rohits-MacBook-Air 01_Docker_Engine % docker exec -it a59b1011acd8 /bin/sh  
+/opt # ls
+
+- second, access the contents of the internal ip using the wget command, which will download the index.html page
+
+/opt # wget http://172.17.0.1:8080
+Connecting to 172.17.0.1:8080 (172.17.0.1:8080)
+index.html           100% |*********************************************************************************************************************************************************|   242   0:00:00 ETA
+
+- third, We can "vi" into the index.html file now, and the contents will look as follows:
+
+/opt # vi index.html
+
+<!doctype html>
+<title>Hello from Flask</title>
+<body style="background: #2980b9;"></body>
+<div style="color: #e4e4e4;
+    text-align:  center;
+    height: 90px;
+    vertical-align:  middle;">
+
+  <h1>Hello from a59b1011acd8!</h1>
+</div>
+
+b. From outside the docker container using the ip of the docker host
+Since 172.17.0.2 is an internal IP, users outside of the docker host cannot access it using this IP.
+Our web browser like Chrome or the terminal outside the container is an external user application, so they have to hit localhost or the ip of the host machine itself, which is 192.168.1.2. So if we do a curl operation, we get the following result from the server
+
+(base) rohit@Rohits-MacBook-Air 01_Docker_Engine % curl https://localhost:8080
+
+<!doctype html>
+<title>Hello from Flask</title>
+<body style="background: #16a085;"></body>
+<div style="color: #e4e4e4;
+    text-align:  center;
+    height: 90px;
+    vertical-align:  middle;">
+
+  <h1>Hello from 510824f019f0!</h1>
+</div>
+
+We can also use the IP of the docker host itself, which is 192.168.1.2. For this to work, we must map the port inside the docker container to a free port on the docker host. For example, if we want the users to access our application through port 80 of the localhost, we can map port 80 to port 8080 on the docker container. We can do this using the -p parameter in the docker run command as follows:
+
+
+docker run -p 80:8080 kodekloud/simple-webapp
+
+The user can now access the application by going to the url http://192.168.1.2:80 and all traffic on port 80 on the docker host will now get routed to port 8080 inside the docker container.
+This way, we can run multiple instances of our application and map them to different ports on the docker host as follows:
+
+docker run -p 80:8080 kodekloud/simple-webapp
+docker run -p 8000:8080 kodekloud/simple-webapp
+docker run -p 8001:8080 kodekloud/simple-webapp
+
+We can also run instances of different application on different ports, like running a mysql instance that runs a database and listens on the default mysql port of 3306, as follows:
+
+docker run -p 3306:3306 mysql
+
+Note that we cannot map to the same port on the docker host more than once. 
+
 

@@ -1,0 +1,1437 @@
+First two commands listed below have already been discussed in previous tutorial
+
+docker network ls
+docker network inspect c3ec
+
+Now, first lets create a container named "first" using the base centos:7 image and inspect it to verify the default IP address.
+
+docker container run -itd --name="first" centos:7
+Unable to find image 'centos:7' locally
+7: Pulling from library/centos
+2d473b07cdd5: Already exists 
+Digest: sha256:0f4ec88e21daf75124b8a9e5ca03c37a5e937e0e108a255d890492430789b60e
+Status: Downloaded newer image for centos:7
+4a02bd407ee22e7eb2afb403d26851479a8e9aa754e57d261c3e0508733fb8d7
+
+docker container inspect 4a02bd
+
+[
+    {
+        "Id": "4a02bd407ee22e7eb2afb403d26851479a8e9aa754e57d261c3e0508733fb8d7",
+        "Created": "2021-07-30T10:13:39.8243646Z",
+        "Path": "/bin/bash",
+        "Args": [],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 65520,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2021-07-30T10:13:45.6655035Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:8652b9f0cb4c0599575e5a003f5906876e10c1ceb2ab9fe1786712dac14a50cf",
+        "ResolvConfPath": "/var/lib/docker/containers/4a02bd407ee22e7eb2afb403d26851479a8e9aa754e57d261c3e0508733fb8d7/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/4a02bd407ee22e7eb2afb403d26851479a8e9aa754e57d261c3e0508733fb8d7/hostname",
+        "HostsPath": "/var/lib/docker/containers/4a02bd407ee22e7eb2afb403d26851479a8e9aa754e57d261c3e0508733fb8d7/hosts",
+        "LogPath": "/var/lib/docker/containers/4a02bd407ee22e7eb2afb403d26851479a8e9aa754e57d261c3e0508733fb8d7/4a02bd407ee22e7eb2afb403d26851479a8e9aa754e57d261c3e0508733fb8d7-json.log",
+        "Name": "/first",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "default",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "host",
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/5552755f482fd5e37e67136df4e94fce5d56dc7956e859b839960353c4062efb-init/diff:/var/lib/docker/overlay2/6912ce1aa75c5c976e32477002fdea6f2c7123d0f35c11de5cecd97986b24e42/diff",
+                "MergedDir": "/var/lib/docker/overlay2/5552755f482fd5e37e67136df4e94fce5d56dc7956e859b839960353c4062efb/merged",
+                "UpperDir": "/var/lib/docker/overlay2/5552755f482fd5e37e67136df4e94fce5d56dc7956e859b839960353c4062efb/diff",
+                "WorkDir": "/var/lib/docker/overlay2/5552755f482fd5e37e67136df4e94fce5d56dc7956e859b839960353c4062efb/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [],
+        "Config": {
+            "Hostname": "4a02bd407ee2",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": true,
+            "OpenStdin": true,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "/bin/bash"
+            ],
+            "Image": "centos:7",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {
+                "org.label-schema.build-date": "20201113",
+                "org.label-schema.license": "GPLv2",
+                "org.label-schema.name": "CentOS Base Image",
+                "org.label-schema.schema-version": "1.0",
+                "org.label-schema.vendor": "CentOS",
+                "org.opencontainers.image.created": "2020-11-13 00:00:00+00:00",
+                "org.opencontainers.image.licenses": "GPL-2.0-only",
+                "org.opencontainers.image.title": "CentOS Base Image",
+                "org.opencontainers.image.vendor": "CentOS"
+            }
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "37d489a11d0737d69570cd27991d7ba307eca6dd3ea45fbeaa576ea60eb047bc",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {},
+            "SandboxKey": "/var/run/docker/netns/37d489a11d07",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "b5953b3865f348d29873160a0cde3625b1ab51fae574aa10bc11228bd16ead79",
+            "Gateway": "172.17.0.1",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "172.17.0.2",
+            "IPPrefixLen": 16,
+            "IPv6Gateway": "",
+            "MacAddress": "02:42:ac:11:00:02",
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "c3ec727b67cdcd70ee3b3ae8748b92fff48ad0e77a4d82ea9d9556cd6c0f0ffe",
+                    "EndpointID": "b5953b3865f348d29873160a0cde3625b1ab51fae574aa10bc11228bd16ead79",
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.2",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:11:00:02",
+                    "DriverOpts": null
+                }
+            }
+        }
+    }
+]
+
+We can see that since nothing is specified, the container is created in the default bridge network. The IP range 172.17.x.x is coming from the default bridge network.
+
+Lets create another container named second using a centos:7 image
+
+docker container run -itd --name="second" centos:7
+403801556c23a18703c231e6ddfb2b41cc48fd1a876ddbb29bd7854a209fd570
+
+docker container inspect second|more
+
+
+[
+    {
+        "Id": "403801556c23a18703c231e6ddfb2b41cc48fd1a876ddbb29bd7854a209fd570",
+        "Created": "2021-07-30T10:18:01.1885633Z",
+        "Path": "/bin/bash",
+        "Args": [],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 66760,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2021-07-30T10:18:02.5683915Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:8652b9f0cb4c0599575e5a003f5906876e10c1ceb2ab9fe1786712dac14a50cf",
+        "ResolvConfPath": "/var/lib/docker/containers/403801556c23a18703c231e6ddfb2b41cc48fd1a876ddbb29bd7854a209fd570/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/403801556c23a18703c231e6ddfb2b41cc48fd1a876ddbb29bd7854a209fd570/hostname",
+        "HostsPath": "/var/lib/docker/containers/403801556c23a18703c231e6ddfb2b41cc48fd1a876ddbb29bd7854a209fd570/hosts",
+        "LogPath": "/var/lib/docker/containers/403801556c23a18703c231e6ddfb2b41cc48fd1a876ddbb29bd7854a209fd570/403801556c23a18703c231e6ddfb2b41cc48fd1a876ddbb29bd7854a209fd570-json.log",
+        "Name": "/second",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "default",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "host",
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/4c1bb926bf4a41ef7757d9da0b1ce06dfd7a0e01f4b3f5e67e6baf15f7d2df18-init/diff:/var/lib/docker/overlay2/6912ce1aa75c5c976e32477002fdea6f2c7123d0f35c11de5cecd97986b24e42/diff",
+                "MergedDir": "/var/lib/docker/overlay2/4c1bb926bf4a41ef7757d9da0b1ce06dfd7a0e01f4b3f5e67e6baf15f7d2df18/merged",
+                "UpperDir": "/var/lib/docker/overlay2/4c1bb926bf4a41ef7757d9da0b1ce06dfd7a0e01f4b3f5e67e6baf15f7d2df18/diff",
+                "WorkDir": "/var/lib/docker/overlay2/4c1bb926bf4a41ef7757d9da0b1ce06dfd7a0e01f4b3f5e67e6baf15f7d2df18/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [],
+        "Config": {
+            "Hostname": "403801556c23",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": true,
+            "OpenStdin": true,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "/bin/bash"
+            ],
+            "Image": "centos:7",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {
+                "org.label-schema.build-date": "20201113",
+                "org.label-schema.license": "GPLv2",
+                "org.label-schema.name": "CentOS Base Image",
+                "org.label-schema.schema-version": "1.0",
+                "org.label-schema.vendor": "CentOS",
+                "org.opencontainers.image.created": "2020-11-13 00:00:00+00:00",
+                "org.opencontainers.image.licenses": "GPL-2.0-only",
+                "org.opencontainers.image.title": "CentOS Base Image",
+                "org.opencontainers.image.vendor": "CentOS"
+            }
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "5a5facc1aee700c18147e9c2fafe5cae4b4ac6a4366c3af8b8604d5d6669f872",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {},
+            "SandboxKey": "/var/run/docker/netns/5a5facc1aee7",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "69c78a13f78fbd8f61015347ae41888d803b5aba70669cd47aa594888dd185d7",
+            "Gateway": "172.17.0.1",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "172.17.0.3",
+            "IPPrefixLen": 16,
+            "IPv6Gateway": "",
+            "MacAddress": "02:42:ac:11:00:03",
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "c3ec727b67cdcd70ee3b3ae8748b92fff48ad0e77a4d82ea9d9556cd6c0f0ffe",
+                    "EndpointID": "69c78a13f78fbd8f61015347ae41888d803b5aba70669cd47aa594888dd185d7",
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.3",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:11:00:03",
+                    "DriverOpts": null
+                }
+            }
+        }
+    }
+]
+
+We can see that the IP address is again in the range 172.17.x.x.
+
+If we now ping the "second" container from inside "first" container, we will exec into "first" and then ping "second" as follows:
+
+docker exec -it first ping second 
+ping: second: Name or service not known
+
+We can see that the above command does not work. 
+
+Similary, if we login into the second and ping the first, it does not work either.
+
+docker exec -it second ping first
+ping: first: Name or service not know
+
+This is because the embedded DNS does not work with the default bridge network.
+
+We can see this if we inspect the bridge network and check its DNS. So first we do 
+
+docker network ls
+NETWORK ID     NAME              DRIVER    SCOPE
+c3ec727b67cd   bridge            bridge    local
+d2f8e7d8fa12   host              host      local
+57ec7ec88790   jenkins           bridge    local
+88f438dd59a9   mongodb_default   bridge    local
+0785bb8af44d   none              null      local
+
+Then we inspect the bridge network as follows:
+
+docker network inspect c3ec
+[
+    {
+        "Name": "bridge",
+        "Id": "c3ec727b67cdcd70ee3b3ae8748b92fff48ad0e77a4d82ea9d9556cd6c0f0ffe",
+        "Created": "2021-07-30T02:48:55.060732642Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.17.0.0/16",
+                    "Gateway": "172.17.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {
+            "403801556c23a18703c231e6ddfb2b41cc48fd1a876ddbb29bd7854a209fd570": {
+                "Name": "second",
+                "EndpointID": "69c78a13f78fbd8f61015347ae41888d803b5aba70669cd47aa594888dd185d7",
+                "MacAddress": "02:42:ac:11:00:03",
+                "IPv4Address": "172.17.0.3/16",
+                "IPv6Address": ""
+            },
+            "4a02bd407ee22e7eb2afb403d26851479a8e9aa754e57d261c3e0508733fb8d7": {
+                "Name": "first",
+                "EndpointID": "b5953b3865f348d29873160a0cde3625b1ab51fae574aa10bc11228bd16ead79",
+                "MacAddress": "02:42:ac:11:00:02",
+                "IPv4Address": "172.17.0.2/16",
+                "IPv6Address": ""
+            }
+        },
+        "Options": {
+            "com.docker.network.bridge.default_bridge": "true",
+            "com.docker.network.bridge.enable_icc": "true",
+            "com.docker.network.bridge.enable_ip_masquerade": "true",
+            "com.docker.network.bridge.host_binding_ipv4": "0.0.0.0",
+            "com.docker.network.bridge.name": "docker0",
+            "com.docker.network.driver.mtu": "1500"
+        },
+        "Labels": {}
+    }
+]
+
+What we need to do for the two containers to interact with each other is to create a user defined network. The command is as follows:
+
+docker network create --driver=bridge --subnet=198.168.10.0/24 kodekloudnet
+a067f287133f68f3fc716a1615278c10a1cd9d7b76f79b4318e2335f94bb7aec
+
+We can check that the network is created 
+
+docker network ls
+NETWORK ID     NAME              DRIVER    SCOPE
+c3ec727b67cd   bridge            bridge    local
+d2f8e7d8fa12   host              host      local
+57ec7ec88790   jenkins           bridge    local
+a067f287133f   kodekloudnet      bridge    local
+88f438dd59a9   mongodb_default   bridge    local
+0785bb8af44d   none              null      local
+
+docker network inspect kodekloudnet
+
+[
+    {
+        "Name": "kodekloudnet",
+        "Id": "a067f287133f68f3fc716a1615278c10a1cd9d7b76f79b4318e2335f94bb7aec",
+        "Created": "2021-07-30T11:09:18.181718Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "192.168.10.0/24"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {},
+        "Options": {},
+        "Labels": {}
+    }
+]
+
+Lets create a container named customfirst specifying a kodekloudnet network with the same --net=kodekloudnet option as follows:
+
+docker container run --name=customfirst --net=kodekloudnet centos:7
+dfed322f949b94096f635303b02079c9b3e171c809ddee4502c5caf523f26bec
+
+docker container inspect customfirst|more
+
+[
+    {
+        "Id": "dfed322f949b94096f635303b02079c9b3e171c809ddee4502c5caf523f26bec",
+        "Created": "2021-07-30T11:20:29.5173397Z",
+        "Path": "/bin/bash",
+        "Args": [],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 84247,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2021-07-30T11:20:36.701553Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:8652b9f0cb4c0599575e5a003f5906876e10c1ceb2ab9fe1786712dac14a50cf",
+        "ResolvConfPath": "/var/lib/docker/containers/dfed322f949b94096f635303b02079c9b3e171c809ddee4502c5caf523f26bec/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/dfed322f949b94096f635303b02079c9b3e171c809ddee4502c5caf523f26bec/hostname",
+        "HostsPath": "/var/lib/docker/containers/dfed322f949b94096f635303b02079c9b3e171c809ddee4502c5caf523f26bec/hosts",
+        "LogPath": "/var/lib/docker/containers/dfed322f949b94096f635303b02079c9b3e171c809ddee4502c5caf523f26bec/dfed322f949b94096f635303b02079c9b3e171c809ddee4502c5caf523f26bec-json.log",
+        "Name": "/customfirst",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "kodekloudnet",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "host",
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/01752bae66e0593eca96fe34e03bec354d9caa39f04302540ed2ca9907e0e105-init/diff:/var/lib/docker/overlay2/6912ce1aa75c5c976e32477002fdea6f2c7123d0f35c11de5cecd97986b24e42/diff",
+                "MergedDir": "/var/lib/docker/overlay2/01752bae66e0593eca96fe34e03bec354d9caa39f04302540ed2ca9907e0e105/merged",
+                "UpperDir": "/var/lib/docker/overlay2/01752bae66e0593eca96fe34e03bec354d9caa39f04302540ed2ca9907e0e105/diff",
+                "WorkDir": "/var/lib/docker/overlay2/01752bae66e0593eca96fe34e03bec354d9caa39f04302540ed2ca9907e0e105/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [],
+        "Config": {
+            "Hostname": "dfed322f949b",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": true,
+            "OpenStdin": true,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "/bin/bash"
+            ],
+            "Image": "centos:7",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {
+                "org.label-schema.build-date": "20201113",
+                "org.label-schema.license": "GPLv2",
+                "org.label-schema.name": "CentOS Base Image",
+                "org.label-schema.schema-version": "1.0",
+                "org.label-schema.vendor": "CentOS",
+                "org.opencontainers.image.created": "2020-11-13 00:00:00+00:00",
+                "org.opencontainers.image.licenses": "GPL-2.0-only",
+                "org.opencontainers.image.title": "CentOS Base Image",
+                "org.opencontainers.image.vendor": "CentOS"
+            }
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "a39a264060844f435e495b0c86369360cd94a25a684259934a73909d352fa590",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {},
+            "SandboxKey": "/var/run/docker/netns/a39a26406084",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": "",
+            "Networks": {
+                "kodekloudnet": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "dfed322f949b"
+                    ],
+                    "NetworkID": "a067f287133f68f3fc716a1615278c10a1cd9d7b76f79b4318e2335f94bb7aec",
+                    "EndpointID": "980aa581c560ee9475eeaf66e1db29559746993fee292eae0d26ed9a7cf5ed57",
+                    "Gateway": "192.168.10.1",
+                    "IPAddress": "192.168.10.2",
+                    "IPPrefixLen": 24,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:c0:a8:0a:02",
+                    "DriverOpts": null
+                }
+            }
+        }
+    }
+]
+
+We can see that the IPAddress is in the range 192.168.x.x range.
+
+Similarly we create a second container called customsecond and attach it to the same network of kodekloudnet as follow
+
+docker container run -itd --name=customsecond --net=kodekloudnet centos:7
+b2bfc1c806d847477e31b5daa69d545edab5d75dfacb1b4689bc347220d834cd
+
+docker container inspect customsecond|more
+[
+    {
+        "Id": "b2bfc1c806d847477e31b5daa69d545edab5d75dfacb1b4689bc347220d834cd",
+        "Created": "2021-07-30T11:30:05.9606049Z",
+        "Path": "/bin/bash",
+        "Args": [],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 87023,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2021-07-30T11:30:09.9786623Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:8652b9f0cb4c0599575e5a003f5906876e10c1ceb2ab9fe1786712dac14a50cf",
+        "ResolvConfPath": "/var/lib/docker/containers/b2bfc1c806d847477e31b5daa69d545edab5d75dfacb1b4689bc347220d834cd/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/b2bfc1c806d847477e31b5daa69d545edab5d75dfacb1b4689bc347220d834cd/hostname",
+        "HostsPath": "/var/lib/docker/containers/b2bfc1c806d847477e31b5daa69d545edab5d75dfacb1b4689bc347220d834cd/hosts",
+        "LogPath": "/var/lib/docker/containers/b2bfc1c806d847477e31b5daa69d545edab5d75dfacb1b4689bc347220d834cd/b2bfc1c806d847477e31b5daa69d545edab5d75dfacb1b4689bc347220d834cd-json.log",
+        "Name": "/customsecond",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "kodekloudnet",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "host",
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/f2abf5117a3f776f4444a8fb0ca7eeb230108211c533859e7bd5065c1e751214-init/diff:/var/lib/docker/overlay2/6912ce1aa75c5c976e32477002fdea6f2c7123d0f35c11de5cecd97986b24e42/diff",
+                "MergedDir": "/var/lib/docker/overlay2/f2abf5117a3f776f4444a8fb0ca7eeb230108211c533859e7bd5065c1e751214/merged",
+                "UpperDir": "/var/lib/docker/overlay2/f2abf5117a3f776f4444a8fb0ca7eeb230108211c533859e7bd5065c1e751214/diff",
+                "WorkDir": "/var/lib/docker/overlay2/f2abf5117a3f776f4444a8fb0ca7eeb230108211c533859e7bd5065c1e751214/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [],
+        "Config": {
+            "Hostname": "b2bfc1c806d8",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": true,
+            "OpenStdin": true,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "/bin/bash"
+            ],
+            "Image": "centos:7",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {
+                "org.label-schema.build-date": "20201113",
+                "org.label-schema.license": "GPLv2",
+                "org.label-schema.name": "CentOS Base Image",
+                "org.label-schema.schema-version": "1.0",
+                "org.label-schema.vendor": "CentOS",
+                "org.opencontainers.image.created": "2020-11-13 00:00:00+00:00",
+                "org.opencontainers.image.licenses": "GPL-2.0-only",
+                "org.opencontainers.image.title": "CentOS Base Image",
+                "org.opencontainers.image.vendor": "CentOS"
+            }
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "b4b696eb453e1b363f287723194b170ae633b923185ec2f598aa9ff0168d9e92",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {},
+            "SandboxKey": "/var/run/docker/netns/b4b696eb453e",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": "",
+            "Networks": {
+                "kodekloudnet": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "b2bfc1c806d8"
+                    ],
+                    "NetworkID": "a067f287133f68f3fc716a1615278c10a1cd9d7b76f79b4318e2335f94bb7aec",
+                    "EndpointID": "60d5f8efd7b126bb92d223b67320e4ed6d3f4c0654a9b2946a2da34c1e649d37",
+                    "Gateway": "192.168.10.1",
+                    "IPAddress": "192.168.10.3",
+                    "IPPrefixLen": 24,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:c0:a8:0a:03",
+                    "DriverOpts": null
+                }
+            }
+        }
+    }
+]
+
+We can again see that the customsecond container's IP Address is also in the range 192.168.x.x range
+
+We can now ping customfirst from customsecond using exec command as follows:
+
+docker exec -it customsecond ping customfirst
+PING customfirst (192.168.10.2) 56(84) bytes of data.
+64 bytes from customfirst.kodekloudnet (192.168.10.2): icmp_seq=1 ttl=64 time=0.176 ms
+64 bytes from customfirst.kodekloudnet (192.168.10.2): icmp_seq=2 ttl=64 time=0.276 ms
+64 bytes from customfirst.kodekloudnet (192.168.10.2): icmp_seq=3 ttl=64 time=0.149 ms
+^C
+--- customfirst ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2020ms
+rtt min/avg/max/mdev = 0.149/0.200/0.276/0.055 ms
+
+We can also ping customesecond from customefirst and see that it works as well, as follows:
+
+docker exec -it customfirst ping custom second
+
+PING customsecond (192.168.10.3) 56(84) bytes of data.
+64 bytes from customsecond.kodekloudnet (192.168.10.3): icmp_seq=1 ttl=64 time=0.357 ms
+64 bytes from customsecond.kodekloudnet (192.168.10.3): icmp_seq=2 ttl=64 time=0.428 ms
+^C
+--- customsecond ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+rtt min/avg/max/mdev = 0.357/0.392/0.428/0.040 ms
+
+We see that both pings work as both are created in the user defined bridge network where the embedded DNS is enabled. Any container in this custom network will be able to communicate with each other.
+
+We can see the default docker DNS in customsecond container using the followin command:
+
+docker exec -it customsecond cat /etc/resolv.conf
+nameserver 127.0.0.11
+options ndots:0
+
+So 127.0.0.11 is the defauly Docker DNS in the above case.
+
+Now lets try to ping different containers from different networks.
+
+We can try this from both where the default container named "first" is running and then from the other custom network where customfirst is running. Neither should work, as follows:
+
+docker exec -it customfirst ping first
+ping: first: Name or service not known
+
+docker exec -it first ping customfirst
+ping: customfirst: Name or service not known
+
+To fix this, we need to associate the custom network with the container named "first".
+First, we check that kodekloudnet has only two containers connected to it, i.e., customfirst and customesecond using the docker network inspect command as follows:
+
+docker network inspect kodekloudnet
+
+
+[
+    {
+        "Name": "kodekloudnet",
+        "Id": "a067f287133f68f3fc716a1615278c10a1cd9d7b76f79b4318e2335f94bb7aec",
+        "Created": "2021-07-30T11:09:18.181718Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "192.168.10.0/24"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {
+            "b2bfc1c806d847477e31b5daa69d545edab5d75dfacb1b4689bc347220d834cd": {
+                "Name": "customsecond",
+                "EndpointID": "60d5f8efd7b126bb92d223b67320e4ed6d3f4c0654a9b2946a2da34c1e649d37",
+                "MacAddress": "02:42:c0:a8:0a:03",
+                "IPv4Address": "192.168.10.3/24",
+                "IPv6Address": ""
+            },
+            "dfed322f949b94096f635303b02079c9b3e171c809ddee4502c5caf523f26bec": {
+                "Name": "customfirst",
+                "EndpointID": "980aa581c560ee9475eeaf66e1db29559746993fee292eae0d26ed9a7cf5ed57",
+                "MacAddress": "02:42:c0:a8:0a:02",
+                "IPv4Address": "192.168.10.2/24",
+                "IPv6Address": ""
+            }
+        },
+        "Options": {},
+        "Labels": {}
+    }
+]
+
+For this, we run the command docker network connect kodekloudnet first, which adds the IP from the custom network to container "first" and the ping should work.
+
+docker network connect kodekloudnet first
+
+
+If we now inspect the custom network "kodekloudnet", we can see that container "first" is also connected to the network, along with "customfirst" and "customsecond" as follows
+
+docker network inspect kodekloudnet
+
+[
+    {
+        "Name": "kodekloudnet",
+        "Id": "a067f287133f68f3fc716a1615278c10a1cd9d7b76f79b4318e2335f94bb7aec",
+        "Created": "2021-07-30T11:09:18.181718Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "192.168.10.0/24"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {
+            "4a02bd407ee22e7eb2afb403d26851479a8e9aa754e57d261c3e0508733fb8d7": {
+                "Name": "first",
+                "EndpointID": "76d8468b5227c6d61051dda4c569f54ad054ee129f862087e06a2c30b3cb81e0",
+                "MacAddress": "02:42:c0:a8:0a:04",
+                "IPv4Address": "192.168.10.4/24",
+                "IPv6Address": ""
+            },
+            "b2bfc1c806d847477e31b5daa69d545edab5d75dfacb1b4689bc347220d834cd": {
+                "Name": "customsecond",
+                "EndpointID": "60d5f8efd7b126bb92d223b67320e4ed6d3f4c0654a9b2946a2da34c1e649d37",
+                "MacAddress": "02:42:c0:a8:0a:03",
+                "IPv4Address": "192.168.10.3/24",
+                "IPv6Address": ""
+            },
+            "dfed322f949b94096f635303b02079c9b3e171c809ddee4502c5caf523f26bec": {
+                "Name": "customfirst",
+                "EndpointID": "980aa581c560ee9475eeaf66e1db29559746993fee292eae0d26ed9a7cf5ed57",
+                "MacAddress": "02:42:c0:a8:0a:02",
+                "IPv4Address": "192.168.10.2/24",
+                "IPv6Address": ""
+            }
+        },
+        "Options": {},
+        "Labels": {}
+    }
+]
+
+If we ping container "first" from container "customfirst", the ping works, as can be seen below:
+
+docker exec -it customfirst ping first
+
+PING first (192.168.10.4) 56(84) bytes of data.
+64 bytes from first.kodekloudnet (192.168.10.4): icmp_seq=1 ttl=64 time=0.392 ms
+64 bytes from first.kodekloudnet (192.168.10.4): icmp_seq=2 ttl=64 time=0.312 ms
+^C
+--- first ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1003ms
+rtt min/avg/max/mdev = 0.312/0.352/0.392/0.040 ms
+
+We can also inspect the container "first" to see the networks it is associated with
+
+docker container inspect first
+
+[
+    {
+        "Id": "4a02bd407ee22e7eb2afb403d26851479a8e9aa754e57d261c3e0508733fb8d7",
+        "Created": "2021-07-30T10:13:39.8243646Z",
+        "Path": "/bin/bash",
+        "Args": [],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 65520,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2021-07-30T10:13:45.6655035Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:8652b9f0cb4c0599575e5a003f5906876e10c1ceb2ab9fe1786712dac14a50cf",
+        "ResolvConfPath": "/var/lib/docker/containers/4a02bd407ee22e7eb2afb403d26851479a8e9aa754e57d261c3e0508733fb8d7/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/4a02bd407ee22e7eb2afb403d26851479a8e9aa754e57d261c3e0508733fb8d7/hostname",
+        "HostsPath": "/var/lib/docker/containers/4a02bd407ee22e7eb2afb403d26851479a8e9aa754e57d261c3e0508733fb8d7/hosts",
+        "LogPath": "/var/lib/docker/containers/4a02bd407ee22e7eb2afb403d26851479a8e9aa754e57d261c3e0508733fb8d7/4a02bd407ee22e7eb2afb403d26851479a8e9aa754e57d261c3e0508733fb8d7-json.log",
+        "Name": "/first",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "default",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "host",
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/5552755f482fd5e37e67136df4e94fce5d56dc7956e859b839960353c4062efb-init/diff:/var/lib/docker/overlay2/6912ce1aa75c5c976e32477002fdea6f2c7123d0f35c11de5cecd97986b24e42/diff",
+                "MergedDir": "/var/lib/docker/overlay2/5552755f482fd5e37e67136df4e94fce5d56dc7956e859b839960353c4062efb/merged",
+                "UpperDir": "/var/lib/docker/overlay2/5552755f482fd5e37e67136df4e94fce5d56dc7956e859b839960353c4062efb/diff",
+                "WorkDir": "/var/lib/docker/overlay2/5552755f482fd5e37e67136df4e94fce5d56dc7956e859b839960353c4062efb/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [],
+        "Config": {
+            "Hostname": "4a02bd407ee2",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": true,
+            "OpenStdin": true,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "/bin/bash"
+            ],
+            "Image": "centos:7",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {
+                "org.label-schema.build-date": "20201113",
+                "org.label-schema.license": "GPLv2",
+                "org.label-schema.name": "CentOS Base Image",
+                "org.label-schema.schema-version": "1.0",
+                "org.label-schema.vendor": "CentOS",
+                "org.opencontainers.image.created": "2020-11-13 00:00:00+00:00",
+                "org.opencontainers.image.licenses": "GPL-2.0-only",
+                "org.opencontainers.image.title": "CentOS Base Image",
+                "org.opencontainers.image.vendor": "CentOS"
+            }
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "37d489a11d0737d69570cd27991d7ba307eca6dd3ea45fbeaa576ea60eb047bc",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {},
+            "SandboxKey": "/var/run/docker/netns/37d489a11d07",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "b5953b3865f348d29873160a0cde3625b1ab51fae574aa10bc11228bd16ead79",
+            "Gateway": "172.17.0.1",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "172.17.0.2",
+            "IPPrefixLen": 16,
+            "IPv6Gateway": "",
+            "MacAddress": "02:42:ac:11:00:02",
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "c3ec727b67cdcd70ee3b3ae8748b92fff48ad0e77a4d82ea9d9556cd6c0f0ffe",
+                    "EndpointID": "b5953b3865f348d29873160a0cde3625b1ab51fae574aa10bc11228bd16ead79",
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.2",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:11:00:02",
+                    "DriverOpts": null
+                },
+                "kodekloudnet": {
+                    "IPAMConfig": {},
+                    "Links": null,
+                    "Aliases": [
+                        "4a02bd407ee2"
+                    ],
+                    "NetworkID": "a067f287133f68f3fc716a1615278c10a1cd9d7b76f79b4318e2335f94bb7aec",
+                    "EndpointID": "76d8468b5227c6d61051dda4c569f54ad054ee129f862087e06a2c30b3cb81e0",
+                    "Gateway": "192.168.10.1",
+                    "IPAddress": "192.168.10.4",
+                    "IPPrefixLen": 24,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:c0:a8:0a:04",
+                    "DriverOpts": {}
+                }
+            }
+        }
+    }
+]
+
+We can see that container "first" is connected to both the bridge network and custom network of kodekloudnet.
+
+If we want to move a container out of a network, we can use docker network disconnect
+
+docker network disconnect kodekloudnet first
+
+If we ping the container "first" after disconnecting from kodekloudnet network from customfirst, we wont get any ping again.
+
+docker exec -it customfirst ping first
+ping: first: Name or service not known
+
+Now lets try to delete kodekloudnet network while it has running containers associated with it.
+
+docker network rm kodekloudnet
+Error response from daemon: error while removing network: network kodekloudnet id a067f287133f68f3fc716a1615278c10a1cd9d7b76f79b4318e2335f94bb7aec has active endpoints
+
+As we can see, docker didnt allow deletion operation while the network has active endpoints, i.e., the network still has containers associated with it.
+
+In this case, we stop and remove all containers associated with kodekloudnet as follows
+
+docker container stop customfirst
+docker container stop customsecond
+
+docker container rm customfirst
+docker container rm customsecond
+
+If we now remove the network kodekloudnet, we are successful in doing so
+
+docker network rm kodekloudnet
+
+We can also use docker network prune which will remove all unused networks
+
+docker network prune
+
+Its important to note that docker network prune does not remove default docker networks of "bridge", "none" and "host" from the host machine. It only works for user defined networks. 
