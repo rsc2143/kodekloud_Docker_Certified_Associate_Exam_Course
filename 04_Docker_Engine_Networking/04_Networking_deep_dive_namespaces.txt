@@ -1,0 +1,274 @@
+Containers are separated from each other using Namespaces.
+
+What are namespaces?
+If our host was a house, then namespaces are the rooms within the house which we provide to our children. The rooms help provide privacy to each child. Each child can only see what's within his or her room. They cannot see what happens outside their room. As far as they are concerned, they are the only person living in the house. However, as a parent, we have visibility into all the rooms in the house, as well as other areas of the house. If we wish, we can establish connectivity between two rooms in the house. 
+
+Process Namespace
+When we create a container, we want to make sure that it is isolated, that it does not see any other processes on the host or any other container. So we create a special room for it on our host using a namespace. As far as the container is concerned, it only sees the processes run by it and thinks that it is on its own host. The underlying host, however, has visibility into all of the processes, including those running inside the containers. This can be seen when we list the processes from within the container. We can do this using the 'ps aux' command as follows:
+
+First we find a container and exec into bash of that container as follows:
+
+(base) rohit@Rohits-MacBook-Air 04_Docker_Engine_Networking % docker container ls -a
+CONTAINER ID   IMAGE                                  COMMAND                  CREATED         STATUS                       PORTS                                       NAMES
+403801556c23   centos:7                               "/bin/bash"              22 hours ago    Exited (255) 17 hours ago                                                second
+4a02bd407ee2   centos:7                               "/bin/bash"              22 hours ago    Exited (255) 17 hours ago                                                first
+a59b1011acd8   kodekloud/simple-webapp                "python app.py"          3 days ago      Exited (255) 29 hours ago    0.0.0.0:80->8080/tcp, :::80->8080/tcp       angry_banach
+12bd89383893   kodekloud/simple-webapp                "python app.py"          3 days ago      Exited (0) 3 days ago                                                    charming_proskuriakova
+8368722dba20   kodekloud/simple-webapp                "python app.py"          3 days ago      Exited (0) 3 days ago                                                    frosty_williams
+28d5466849fb   fast_api_detection_docker_ml           "/start.sh"              3 weeks ago     Exited (0) 3 weeks ago                                                   mycontainer
+
+Now start container "first"
+rohit@Rohits-MacBook-Air 04_Docker_Engine_Networking % docker container start first
+
+Then exec /bin/bash into the container
+(base) rohit@Rohits-MacBook-Air 04_Docker_Engine_Networking % docker exec -it first /bin/bash
+ 
+[root@4a02bd407ee2 /]# ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.5  0.1  11844  2716 pts/0    Ss+  08:12   0:00 /bin/bash
+root        16  0.7  0.1  11844  2844 pts/1    Ss   08:12   0:00 /bin/bash
+root        30  1.0  0.1  51748  3332 pts/1    R+   08:12   0:00 ps aux
+
+We see three processes with process IDs of 1, 16 and 30
+
+If we come back to the host bash and list the processes from the underlying host, we see all the other processes along with the processes running inside the container, this time with a different process ID as shown below
+
+(base) rohit@Rohits-MacBook-Air 04_Docker_Engine_Networking % ps aux | grep "ps aux"
+rohit             2986   0.0  0.0  4268300    448 s000  R+    1:51PM   0:00.00 grep ps aux
+root              2985   0.0  0.0  4280388   1068 s000  R+    1:51PM   0:00.01 ps aux
+(base) rohit@Rohits-MacBook-Air 04_Docker_Engine_Networking % ps aux | grep "/bin/bash"
+rohit             2989   0.0  0.0  4259000    244 s000  R+    1:51PM   0:00.00 grep /bin/bash
+root              2926   0.0  0.1  4329816   4980 s001  Ss    1:43PM   0:00.11 login -pfl rohit /bin/bash -c exec -la zsh /bin/zsh
+
+We can see that these are same processes running with different process IDs inside and outside the container. This is how namespaces work.
+
+Network Namespace
+When it comes to networking, our host has its own interfaces that connect to the local area network. Our host has its own routing and ARP tables with information about rest of the network. We want to seal all of those details from the container. When a container is created, we create a network namespace for it, so that it does not have any visibility to any network related information on the host. 
+Within its namespace, the container can have its own virtual interfaces, routing and ARP tables. The container has its own interface.
+
+CREATE NETWORK NS
+To create a new network namespace on a Linux host, we run the "ip netns add" command
+
+(base) rohit@Rohits-MacBook-Air 04_Docker_Engine_Networking % ip netns add red
+zsh: command not found: ip
+
+Therefore, I go log into the centos EC2 instance I have created, using the following ssh command (Here xxx-xxx-xxx-xxx is the IP that I have hidden):
+
+(base) rohit@Rohits-MacBook-Air key_value_pairs_for_aws_instances % ssh -i "dockerstudykeyvaluepair.pem" centos@ec2-xxx-xxx-xxx-xxx.us-east-2.compute.amazonaws.com 
+Last login: Thu Jul 29 14:19:56 2021 from 27.7.197.150
+-bash: warning: setlocale: LC_CTYPE: cannot change locale (UTF-8): No such file or directory
+
+[centos@ip-xxx-xxx-xxx-xxx ~]$ ip netns add red
+mkdir /var/run/netns failed: Permission denied
+
+[centos@ip-xxx-xxx-xxx-xxx ~]$ sudo -i
+
+[root@ip-xxx-xxx-xxx-xxx ~]# ip netns add red
+[root@ip-xxx-xxx-xxx-xxx ~]# ip netns add blue
+
+To list the network namespaces, we run the 'ip netns' command as follows:
+
+[root@ip-xxx-xxx-xxx-xxx ~]# ip netns
+blue
+red
+
+EXEC IN NETWORK NS
+To list the interfaces on our host, we run the ip link command as follows:
+
+[root@ip-xxx-xxx-xxx-xxx ~]# ip link
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9001 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+    link/ether 06:53:ab:6c:55:ec brd ff:ff:ff:ff:ff:ff
+3: docker0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default 
+    link/ether 02:42:7a:8d:5d:72 brd ff:ff:ff:ff:ff:ff
+5: veth7bf1f68@if4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
+    link/ether 6a:b8:9e:5e:83:3c brd ff:ff:ff:ff:ff:ff link-netnsid 0
+7: vethb838659@if6: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
+    link/ether da:06:bc:3b:01:c0 brd ff:ff:ff:ff:ff:ff link-netnsid 1
+9: veth2eba8ed@if8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
+    link/ether fa:38:42:c3:71:d7 brd ff:ff:ff:ff:ff:ff link-netnsid 2
+11: veth5c867d4@if10: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
+    link/ether 9e:d1:1f:36:24:b4 brd ff:ff:ff:ff:ff:ff link-netnsid 3
+13: veth2cd3993@if12: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
+    link/ether ae:06:e2:00:51:4a brd ff:ff:ff:ff:ff:ff link-netnsid 4
+15: veth4ae1bbd@if14: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
+    link/ether aa:b6:02:fb:f0:c1 brd ff:ff:ff:ff:ff:ff link-netnsid 5
+
+We see that the host has the loopback interface and the eth0 interface
+
+How do we run the same command in the red or blue namespace?
+Answer : Prefix the 'ip link' command with the 'ip netns exec red' as follows:
+
+[root@ip-xxx-xxx-xxx-xxx ~]# ip netns exec red ip link
+1: lo: <LOOPBACK> mtu 65536 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00 
+
+Using the above command, the 'ip link' command is executed within the 'red' namespace.
+
+Another way to do it is to add the '-n' option to 'ip link' command as follows:
+
+[root@ip-xxx-xxx-xxx-xxx ~]# ip -n red link
+1: lo: <LOOPBACK> mtu 65536 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+[root@ip-xxx-xxx-xxx-xxx ~]# ip -n blue link
+1: lo: <LOOPBACK> mtu 65536 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+
+Both the commands are same and they only run if we intend to run the IP command inside the namespace. As we can see, these commands only list the loopback interface and do not let us see the 'eth0' interface on the host using these commands. Therefore, with namespaces, we have succesfully prevented the container from seeing the host interface. 
+
+The above is also true with the ARP table. If we run the arp command on the host, we see a list of entries as follows:
+[root@ip-xxx-xxx-xxx-xxx ~]# arp
+Address                  HWtype  HWaddress           Flags Mask            Iface
+ip-172-31-16-1.us-east-  ether   06:3c:cd:dc:45:ee   C                     eth0
+
+But if we run the 'arp' command inside the container, we see no entries as follows:
+[root@ip-xxx-xxx-xxx-xxx ~]# ip netns exec red arp
+[root@ip-xxx-xxx-xxx-xxx ~]# ip netns exec blue arp
+[root@ip-xxx-xxx-xxx-xxx ~]# #no output from above commands
+
+The same is true for routing table as shown below
+
+[root@ip-xxx-xxx-xxx-xxx ~]# route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+default         ip-172-31-16-1. 0.0.0.0         UG    0      0        0 eth0
+default         ip-172-31-16-1. 0.0.0.0         UG    100    0        0 eth0
+172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0
+172.31.16.0     0.0.0.0         255.255.240.0   U     0      0        0 eth0
+172.31.16.0     0.0.0.0         255.255.240.0   U     100    0        0 eth0
+[root@ip-xxx-xxx-xxx-xxx ~]# ip netns exec red route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+[root@ip-xxx-xxx-xxx-xxx ~]# ip netns exec blue route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+[root@ip-xxx-xxx-xxx-xxx ~]# 
+
+As of now, the network namespaces created have no network connectivity. They have no interfaces of their own and they cannot see the underlying host network. 
+
+Lets first try to establish network connectivity between the two namespaces themselves. Just like we would connect two physical machines together using a cable to an Ethernet interface on each machine, we can connect two namespaces together using a virtual ethernet pair or a virtual ethernet cable. Its often referred to as a pipe, but we call it virtual cable with two interfaces on either ends.
+
+To create the cable, run the 'ip link add' command with a type set to veth and specify the two ends as 'veth-red' and 'veth-blue'.
+
+[root@ip-xxx-xxx-xxx-xxx ~]# ip link add veth-red type veth peer name veth-blue 
+
+The next step is to attach the appropriate interface to each namespace. For this, we use the following command:
+
+[root@ip-xxx-xxx-xxx-xxx ~]# ip link set veth-red netns red
+[root@ip-xxx-xxx-xxx-xxx ~]# ip link set veth-blue netns blue
+
+We can then assign IP addresses to each of these namespaces. We will use the usual 'ip addr' command to assign the IP address but within each namespace. We assign the red namespace with IP 192.168.15.1 and assign the blue namespace with 192.168.15.2.
+
+[root@ip-xxx-xxx-xxx-xxx ~]# ip -n red addr add 192.168.15.1 dev veth-red
+[root@ip-xxx-xxx-xxx-xxx ~]# ip -n blue addr add 192.168.15.2 dev veth-blue
+
+We then bring up the interface using the IP link set up command for each device within the respective namespaces.
+
+[root@ip-xxx-xxx-xxx-xxx ~]# ip -n red link set veth-red up
+[root@ip-xxx-xxx-xxx-xxx ~]# ip -n blue link set veth-blue up
+
+After the above command, the links are up and the namespaces can now reach each other. 
+
+To check if the links are up for the two namespace, we can ping the blue namespace with IP of 192.168.15.2 from the red namespace as follows:
+
+[root@ip-172-31-25-209 ~]# ip netns exec red ping 192.168.15.2
+connect: Network is unreachable
+
+The above command does not work. This is because we don't have a proper routing in the namespaces. In this case, it is because we missed the netmask when adding the IP address.
+So we add the IP address with a /24 so the routing table knows that it can reach other IPs in the network through this interface. 
+For this, we do following steps
+1. We clear all IP addresses first
+[root@ip-172-31-25-209 ~]# ip -n red  addr flush dev veth-red
+[root@ip-172-31-25-209 ~]# ip -n blue addr flush dev veth-blue
+
+2. Add the correct IP with netmask (using /24 as least confusing, but even /30 will work for your example).
+[root@ip-172-31-25-209 ~]# ip -n red  addr add 192.168.15.1/24 dev veth-red
+[root@ip-172-31-25-209 ~]# ip -n blue addr add 192.168.15.2/24 dev veth-blue
+
+And then we can resend the ping again and it works as follows:
+[root@ip-172-31-25-209 ~]# ip netns exec red ping -c2 192.168.15.2
+PING 192.168.15.2 (192.168.15.2) 56(84) bytes of data.
+64 bytes from 192.168.15.2: icmp_seq=1 ttl=64 time=0.048 ms
+64 bytes from 192.168.15.2: icmp_seq=2 ttl=64 time=0.046 ms
+
+--- 192.168.15.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 999ms
+rtt min/avg/max/mdev = 0.046/0.047/0.048/0.001 ms
+
+If we look at the arp table of the red namespace, we see its identified its blue neighbor as follows:
+
+[root@ip-172-31-25-209 ~]# ip netns exec red arp
+Address                  HWtype  HWaddress           Flags Mask            Iface
+192.168.15.2             ether   c6:16:75:74:98:f1   C                     veth-red
+
+[root@ip-172-31-25-209 ~]# ip netns exec blue arp
+Address                  HWtype  HWaddress           Flags Mask            Iface
+192.168.15.1             ether   56:01:4b:90:7b:6e   C                     veth-blue
+
+If we compare this with the arp table of the host, we see that the host arp table has no idea about the new namespace or the interfaces we have created inside them.
+
+[root@ip-172-31-25-209 ~]# arp
+Address                  HWtype  HWaddress           Flags Mask            Iface
+ip-172-31-16-1.us-east-  ether   06:3c:cd:dc:45:ee   C                     eth0
+ip-172-17-0-7.us-east-2  ether   02:42:ac:11:00:07   C                     docker0
+
+Now this works when we have two namespaces. What happens when we have more then two namespaces? How do we enable more of them to communicate with each other? Just like in the physical world, we create a virtual network inside the host. To create a network, we create a switch. So to create a virtual network, we create a virtual switch. We create a virtual switch within our host and connect the namespaces to it. 
+
+How do we create a virtual switch within our host?
+There are multiple solutions available such as the native solution called the Linux Bridge and the Open vSwitch etc. In our case, we will use the Linux Bridge optionnm,.
+
+LINUX BRIDGE
+To create an internal bridge network, we add a new interface to the host using the 'ip link add' command with the type set to bridge. We name it v-net-0 as follows:
+[root@ip-172-31-25-209 ~]# ip link add v-net-0 type bridge
+
+As far as our host is concerned, it is just another interface, just like the eth0 interface. It appears in the output of the 'ip link' command along with other interfaces as follows:
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9001 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+    link/ether 06:53:ab:6c:55:ec brd ff:ff:ff:ff:ff:ff
+3: docker0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default 
+    link/ether 02:42:7a:8d:5d:72 brd ff:ff:ff:ff:ff:ff
+5: veth7bf1f68@if4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
+    link/ether 6a:b8:9e:5e:83:3c brd ff:ff:ff:ff:ff:ff link-netnsid 0
+7: vethb838659@if6: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
+    link/ether da:06:bc:3b:01:c0 brd ff:ff:ff:ff:ff:ff link-netnsid 1
+9: veth2eba8ed@if8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
+    link/ether fa:38:42:c3:71:d7 brd ff:ff:ff:ff:ff:ff link-netnsid 2
+11: veth5c867d4@if10: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
+    link/ether 9e:d1:1f:36:24:b4 brd ff:ff:ff:ff:ff:ff link-netnsid 3
+13: veth2cd3993@if12: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
+    link/ether ae:06:e2:00:51:4a brd ff:ff:ff:ff:ff:ff link-netnsid 4
+15: veth4ae1bbd@if14: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default 
+    link/ether aa:b6:02:fb:f0:c1 brd ff:ff:ff:ff:ff:ff link-netnsid 5
+26: v-net-0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether e6:9c:72:c8:08:2a brd ff:ff:ff:ff:ff:ff
+
+Its down, so we need to turn it up using the 'ip link set dev up' command as follows:
+[root@ip-172-31-25-209 ~]# ip link set dev v-net-0 up
+
+Now for the namespaces, this interface is like a switch that it can connect to. We can think of it as an interface for the host, and the switch for the namespaces. The next step is to connect the namespaces to this new virtual network switch. Earlier, we created the cable or the eth pair with the veth-red interface on one end and blue interface on the other end because we wanted to connect the two namespaces directly. Now, we will be connecting all namespaces to the bridge network. So we need new cables for that purpose. This cable doesn't make sense anymore, so we will get rid of it.
+We use the 'ip link delete' command to delete the cable for this and check using the 'ip link' command as follows:
+[root@ip-172-31-25-209 ~]# ip -n red link delete veth-red
+[root@ip-172-31-25-209 ~]# ip -n red link
+1: lo: <LOOPBACK> mtu 65536 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+
+We see that the veth-red has been deleted above. When we delete the link with one end, the other end gets deleted as well since they are a pair.
+
+Let us now create new cables to connect the namespaces to the bridge. We run the 'ip link add' command and create a pair with veth-red on one end, like before, but this time, the other end will be named veth-red-br as it connects to the bridge network (this is just a naming convention we have followed to make names more intuitive to understand and identify interfaces that associate to red namespace).
+[root@ip-172-31-25-209 ~]# ip link add veth-red type veth peer name veth-red-br
+
+Similarly, we create a cable to connect the blue namespace to the bridge network. 
+[root@ip-172-31-25-209 ~]# ip link add veth-blue type veth peer name veth-blue-br
+
+Now that we have the cables ready, it time to get them connected to the namespaces. To attach one of the interface to the red namespace, we run the 'ip link set veth-red netns red' command.
+[root@ip-172-31-25-209 ~]# ip link set veth-red netns red
+
+To attach the other end to the bridge network, we run the 'ip link set' command on the 'veth-red-br' end and specify the master for it as the v-net-0 network.
+[root@ip-172-31-25-209 ~]# ip link set veth-red-br master v-net-0
+
+ 
+
+
+
